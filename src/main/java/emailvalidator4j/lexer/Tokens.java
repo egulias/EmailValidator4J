@@ -3,9 +3,31 @@ package emailvalidator4j.lexer;
 import java.util.HashMap;
 
 public enum Tokens implements TokenInterface {
-    SLASH("SLASH", "/"),
+    OPENPARETHESIS("OPENPARETHESIS", "("),
+    CLOSEPARENTHESIS("CLOSEPARENTHESIS", ")"),
+    LOWERTHAN("LOWERTHAN", "<"),
+    GREATERTHAN("GREATERTHAN", ">"),
+    OPENBRACKET("OPENBRACKET", "["),
+    CLOSEBRACKET("CLOSEBRACKET", "]"),
+    COLON("COLON", ":"),
+    SEMICOLON("SEMICOLON", ";"),
     AT("AT", "@"),
-    OPENPARETHESIS("OPENPARENTHESIS", "(");
+    BACKSLASH("BACKSLASH", "\\"),
+    SLASH("SLASH", "/"),
+    COMMA("COMMA", ","),
+    DOT("DOT", "."),
+    DQUOTE("DQUOTE", "\""),
+    HYPHEN("HYPHEN", "-"),
+    DOUBLECOLON("DOUBLECOLON", "::"),
+    SP("SP", " "),
+    HTAB("HTAB", "\t"),
+    CR("CR", "\r"),
+    LF("LF", "\n"),
+    CRLF("CRLF", "\r\n"),
+    IPV6TAG("IPV6TAG", "IPv6"),
+    OPENQBRACKET("OPENQBRACKET", "{"),
+    CLOSEQBRACKET("CLOSEQBRACKET", "}"),
+    NUL("NUL", "\0");
 
     private static final HashMap<String, TokenInterface> tokensMap = new HashMap<String, TokenInterface>();
 
