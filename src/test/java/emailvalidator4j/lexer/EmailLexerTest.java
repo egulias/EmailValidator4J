@@ -9,6 +9,6 @@ public class EmailLexerTest {
         EmailLexer lexer = new EmailLexer();
         lexer.lex("@");
 
-        Assert.assertTrue(SpecialTokens.AT.equals(lexer.getCurrent()));
+        Assert.assertTrue(Tokens.AT.equals(lexer.getCurrent()));
     }
 }

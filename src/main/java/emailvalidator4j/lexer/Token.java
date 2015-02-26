@@ -5,7 +5,7 @@ public class Token implements TokenInterface {
     private String name;
     private String text;
 
-    public Token (String name, String text) {
+    public Token(String name, String text) {
         this.name = name;
         this.text = text;
     }
