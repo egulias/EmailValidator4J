@@ -7,6 +7,9 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 @RunWith(DataProviderRunner.class)
 public class EmailLexerTest {
     @DataProvider
@@ -43,10 +46,76 @@ public class EmailLexerTest {
 
     @Test
     @UseDataProvider("tokensStringsProvider")
-    public void lexerHasToken(String value, TokenInterface expected) {
+    public void hasToken(String value, TokenInterface expected) {
         EmailLexer lexer = new EmailLexer();
         lexer.lex(value);
 
         Assert.assertTrue(expected.equals(lexer.getCurrent()));
     }
+
+    @Test
+    public void itCanBeMoved() {
+        EmailLexer lexer = new EmailLexer();
+        lexer.lex("foo@bar");
+        lexer.next();
+
+        Assert.assertTrue(lexer.getCurrent().equals(Tokens.AT));
+    }
+
+    @Test
+    public void itFinishes() {
+        EmailLexer lexer = new EmailLexer();
+        lexer.lex("foo@bar");
+        while (!lexer.isAtEnd()) {
+            lexer.next();
+        }
+
+        Assert.assertTrue(lexer.isAtEnd());
+    }
+
+    @Test
+    public void isNextToken() {
+        EmailLexer lexer = new EmailLexer();
+        lexer.lex("foo@bar");
+        Assert.assertTrue(lexer.isNextToken(Tokens.AT));
+    }
+
+    @Test
+    public void isNotNextToken() {
+        EmailLexer lexer = new EmailLexer();
+        lexer.lex("foo@bar");
+        Assert.assertFalse(lexer.isNextToken(Tokens.SP));
+    }
+
+    @Test
+    public void isNextTokenOnTheEdge() {
+        EmailLexer lexer = new EmailLexer();
+        lexer.lex("foo@bar");
+        lexer.next();
+        lexer.next();
+        Assert.assertFalse(lexer.isNextToken(Tokens.get("bar")));
+    }
+
+    @Test
+    public void isNextTokenBeforeEnd() {
+        EmailLexer lexer = new EmailLexer();
+        lexer.lex("foo@bar");
+        lexer.next();
+        Assert.assertTrue(lexer.isNextToken(Tokens.get("bar")));
+    }
+
+    @Test
+    public void isNextTokenAnyOf() {
+        EmailLexer lexer = new EmailLexer();
+        lexer.lex("foo@bar");
+        Assert.assertTrue(lexer.isNextToken(new ArrayList<TokenInterface>(Arrays.asList(Tokens.AT, Tokens.SP))));
+    }
+
+    @Test
+    public void tokenExists() {
+        EmailLexer lexer = new EmailLexer();
+        lexer.lex("foo@bar.com");
+        Assert.assertTrue(lexer.find(Tokens.DOT));
+    }
+
 }

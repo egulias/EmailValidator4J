@@ -1,13 +1,15 @@
 package emailvalidator4j.lexer;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class EmailLexer {
+    private int position = 0;
     private Optional<TokenInterface> current = Optional.empty();
-    private ArrayList<TokenInterface> tokens = new ArrayList<TokenInterface>(1);
+    private final List<TokenInterface> tokens = new ArrayList<TokenInterface>();
 
     public void lex(String input) {
         Pattern pattern = Pattern.compile("([a-zA-Z_]+[46]?)|([0-9]+)|(\r\n)|(::)|(\\s+?)|(.)");
@@ -18,11 +20,54 @@ public class EmailLexer {
         }
 
         if (!this.tokens.isEmpty()) {
-            this.current = Optional.of(this.tokens.get(0));
+            this.current = Optional.of(this.tokens.get(this.position));
         }
     }
 
     public TokenInterface getCurrent() {
         return this.current.orElse(new Token("", ""));
+    }
+
+    public void next() {
+        this.position ++;
+        if (!this.isAtEnd()) {
+            this.current = Optional.of(this.tokens.get(this.position));
+        }
+    }
+
+    public boolean isAtEnd() {
+        return this.position >= this.tokens.size();
+    }
+
+    public boolean isNextToken(TokenInterface token) {
+        if (this.tokens.size() <= this.position + 1) {
+            return false;
+        }
+        return this.tokens.get(this.position + 1).equals(token);
+    }
+
+    public boolean isNextToken(List<TokenInterface> tokens) {
+        for (TokenInterface token : tokens) {
+            if (isNextToken(token)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean find(TokenInterface token) {
+        if (this.tokens.size() <= this.position + 1) {
+            return false;
+        }
+
+        int lookahead = this.position + 1;
+
+        while (lookahead <= this.tokens.size()) {
+            if (token.equals(this.tokens.get(lookahead))) {
+                return true;
+            }
+            lookahead++;
+        }
+        return false;
     }
 }
