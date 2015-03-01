@@ -118,4 +118,11 @@ public class EmailLexerTest {
         Assert.assertTrue(lexer.find(Tokens.DOT));
     }
 
+    @Test
+    public void isResetWhenLexing() {
+        EmailLexer lexer = new EmailLexer();
+        lexer.lex("foo@bar.com");
+        lexer.lex("baz@bar.com");
+        Assert.assertTrue(lexer.getCurrent().equals(Tokens.get("baz")));
+    }
 }

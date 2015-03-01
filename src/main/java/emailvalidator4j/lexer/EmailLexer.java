@@ -15,6 +15,7 @@ public class EmailLexer {
         Pattern pattern = Pattern.compile("([a-zA-Z_]+[46]?)|([0-9]+)|(\r\n)|(::)|(\\s+?)|(.)");
         Matcher matcher = pattern.matcher(input);
 
+        this.reset();
         while(matcher.find()) {
             this.tokens.add(Tokens.get(input.substring(matcher.start(), matcher.end())));
         }
@@ -22,6 +23,12 @@ public class EmailLexer {
         if (!this.tokens.isEmpty()) {
             this.current = Optional.of(this.tokens.get(this.position));
         }
+    }
+
+    private void reset() {
+        this.position = 0;
+        this.current = Optional.empty();
+        this.tokens.clear();
     }
 
     public TokenInterface getCurrent() {
