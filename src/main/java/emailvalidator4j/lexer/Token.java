@@ -11,7 +11,7 @@ public class Token implements TokenInterface {
     }
 
     public boolean equals(TokenInterface that) {
-        return this.name.equals(that.getName()) && this.text.equals(that.getText());
+        return this.name.equals(that.getName());
     }
 
     public String getName () {

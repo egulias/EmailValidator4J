@@ -10,7 +10,7 @@ import org.junit.rules.ExpectedException;
 
 import static org.mockito.Mockito.*;
 
-public class EmailParserTest {
+public class EmailTest {
 
     @Rule
     public ExpectedException exception = ExpectedException.none();
@@ -21,7 +21,7 @@ public class EmailParserTest {
 
         when(lexer.find(Tokens.AT)).thenReturn(false);
 
-        EmailParser parser = new EmailParser(lexer);
+        Email parser = new Email(lexer);
         exception.expect(NoLocalPart.class);
         parser.parse("nolocalpart.com");
     }

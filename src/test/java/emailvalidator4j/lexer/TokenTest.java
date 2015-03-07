@@ -22,10 +22,10 @@ public class TokenTest {
     }
 
     @Test
-    public void tokenWithSameNameNotEqualsToken() {
+    public void tokenWithSameNameEqualsToken() {
         Token token1 = new Token("token1", "token1");
         Token token2 = new Token("token1", "token2");
 
-        Assert.assertFalse(token1.equals(token2));
+        Assert.assertTrue(token1.equals(token2));
     }
 }

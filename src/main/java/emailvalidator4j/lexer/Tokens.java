@@ -47,7 +47,7 @@ public enum Tokens implements TokenInterface {
 
     public static TokenInterface get(String value) {
         final TokenInterface token = tokensMap.get(value);
-        return token != null ? token : new Token(value, value);
+        return token != null ? token : new Token("GENERIC", value);
     }
 
     public boolean equals(TokenInterface that) {

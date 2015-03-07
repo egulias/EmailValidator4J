@@ -18,7 +18,7 @@ public class TokensTest {
 
     @Test
     public void tokenGenericTokenIsReturnedWhenNoTokenFound() {
-        Token token = new Token("text", "text");
+        Token token = new Token("GENERIC", "text");
         Assert.assertTrue(token.equals(Tokens.get("text")));
     }
 }

@@ -125,4 +125,12 @@ public class EmailLexerTest {
         lexer.lex("baz@bar.com");
         Assert.assertTrue(lexer.getCurrent().equals(Tokens.get("baz")));
     }
+
+    @Test
+    public void hasPreviousToken() {
+        EmailLexer lexer = new EmailLexer();
+        lexer.lex("foo@bar.com");
+        lexer.next();
+        Assert.assertTrue(lexer.getPrevious().equals(Tokens.get("foo")));
+    }
 }

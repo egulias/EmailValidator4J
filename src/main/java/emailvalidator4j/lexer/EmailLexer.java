@@ -69,12 +69,17 @@ public class EmailLexer {
 
         int lookahead = this.position + 1;
 
-        while (lookahead <= this.tokens.size()) {
+        while (lookahead < this.tokens.size()) {
             if (token.equals(this.tokens.get(lookahead))) {
                 return true;
             }
             lookahead++;
         }
         return false;
+    }
+
+    public TokenInterface getPrevious() {
+        int previousPosition = this.position - 1 >= 0 ?this.position - 1 : 0;
+        return this.tokens.get(previousPosition);
     }
 }
