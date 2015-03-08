@@ -53,4 +53,26 @@ public class LocalPartTest {
 
         parser.parse("at\"start\"test@");
     }
+
+    @Test
+    public void unclosedComment() throws InvalidEmail {
+        EmailLexer lexer = new EmailLexer();
+        LocalPart parser = new LocalPart(lexer);
+
+        exception.expect(UnclosedComment.class);
+        exception.expectMessage("Unclosed Comment");
+
+        parser.parse("at(starttest@");
+    }
+
+    @Test
+    public void consecutiveDots() throws InvalidEmail {
+        EmailLexer lexer = new EmailLexer();
+        LocalPart parser = new LocalPart(lexer);
+
+        exception.expect(ConsecutiveDots.class);
+        exception.expectMessage("Consecutive dots");
+
+        parser.parse("with..dots@");
+    }
 }

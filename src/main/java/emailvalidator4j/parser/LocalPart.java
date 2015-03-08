@@ -34,6 +34,12 @@ public class LocalPart extends Parser {
                 parseDQuote = this.parseDoubleQuote();
             }
 
+            if (this.lexer.getCurrent().equals(Tokens.OPENPARETHESIS)) {
+                this.parseComment();
+            }
+
+            this.checkConsecutiveDots();
+
             lexer.next();
         }
 
@@ -60,6 +66,7 @@ public class LocalPart extends Parser {
             if (!this.escaped() && invalid.contains(this.lexer.getCurrent())) {
                 throw new ExpectedATEXT("Invalid token without escaping");
             }
+
             this.lexer.next();
         }
 
