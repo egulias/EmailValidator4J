@@ -39,10 +39,10 @@ public class LocalPart extends Parser {
             this.checkForInvalidToken(closingQuote);
 
 //            $this->warnEscaping();
-//
-//            if ($this->isFWS()) {
-//                $this->parseFWS();
-//            }
+
+            if (this.isFWS()) {
+                this.parseFWS();
+            }
 
             lexer.next();
         }

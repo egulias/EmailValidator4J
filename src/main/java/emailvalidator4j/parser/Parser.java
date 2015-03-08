@@ -3,12 +3,10 @@ package emailvalidator4j.parser;
 import emailvalidator4j.lexer.EmailLexer;
 import emailvalidator4j.lexer.TokenInterface;
 import emailvalidator4j.lexer.Tokens;
-import emailvalidator4j.parser.exception.ConsecutiveDots;
-import emailvalidator4j.parser.exception.InvalidEmail;
-import emailvalidator4j.parser.exception.UnclosedComment;
-import emailvalidator4j.parser.exception.UnclosedDQUOTE;
+import emailvalidator4j.parser.exception.*;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public abstract class Parser {
@@ -89,5 +87,54 @@ public abstract class Parser {
             throw new UnclosedDQUOTE("Unclosed DQUOTE");
         }
         return hasClosingQuote;
+    }
+
+    protected boolean isFWS() {
+        List<TokenInterface> FWSTokens = new ArrayList<TokenInterface>(Arrays.asList(
+                Tokens.HTAB,
+                Tokens.SP,
+                Tokens.CR,
+                Tokens.LF,
+                Tokens.CRLF
+        ));
+
+        return !this.escaped() && FWSTokens.contains(this.lexer.getCurrent());
+    }
+
+    protected void parseFWS() throws InvalidEmail {
+        this.checkCRLFInFWS();
+
+//        $previous = $this->lexer->getPrevious();
+//
+//        $this->checkCRLFInFWS();
+//
+//        if ($this->lexer->token['type'] === EmailLexer::S_CR) {
+//            throw new \InvalidArgumentException("ERR_CR_NO_LF");
+//        }
+//
+//        if ($this->lexer->isNextToken(EmailLexer::GENERIC) && $previous['type']  !== EmailLexer::S_AT) {
+//            throw new \InvalidArgumentException("ERR_ATEXT_AFTER_CFWS");
+//        }
+//
+//        if ($this->lexer->token['type'] === EmailLexer::S_LF || $this->lexer->token['type'] === EmailLexer::C_NUL) {
+//            throw new \InvalidArgumentException('ERR_EXPECTING_CTEXT');
+//        }
+//
+//        if ($this->lexer->isNextToken(EmailLexer::S_AT) || $previous['type']  === EmailLexer::S_AT) {
+//            $this->warnings[] = EmailValidator::DEPREC_CFWS_NEAR_AT;
+//        } else {
+//            $this->warnings[] = EmailValidator::CFWS_FWS;
+//        }
+    }
+
+    private void checkCRLFInFWS() throws InvalidEmail {
+        if (this.lexer.getCurrent().equals(Tokens.CRLF)) {
+            if (this.lexer.isNextToken(Tokens.CRLF)) {
+                throw new ConsecutiveCRLF("Consecutive CRLF");
+            }
+        }
+//        if (!$this->lexer->isNextTokenAny(array(EmailLexer::S_SP, EmailLexer::S_HTAB))) {
+//            throw new \InvalidArgumentException("ERR_FWS_CRLF_END");
+//        }
     }
 }

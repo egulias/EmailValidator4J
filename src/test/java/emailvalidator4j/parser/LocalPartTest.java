@@ -113,6 +113,22 @@ public class LocalPartTest {
         };
     }
 
+    @Test
+    public void consecutiveCRLF() throws InvalidEmail {
+        LocalPart parser = this.getLocalPartParser();
+        exception.expect(ConsecutiveCRLF.class);
+
+        parser.parse("test\r\n\r\nat@");
+    }
+
+    @Test
+    public void cRLFAtEnd() throws InvalidEmail {
+        LocalPart parser = this.getLocalPartParser();
+        exception.expect(ConsecutiveCRLF.class);
+
+        parser.parse("test\r\n\tat@");
+    }
+
     private LocalPart getLocalPartParser() {
         EmailLexer lexer = new EmailLexer();
         return new LocalPart(lexer);
