@@ -1,11 +1,16 @@
 package emailvalidator4j.parser;
 
+import com.tngtech.java.junit.dataprovider.DataProvider;
+import com.tngtech.java.junit.dataprovider.DataProviderRunner;
+import com.tngtech.java.junit.dataprovider.UseDataProvider;
 import emailvalidator4j.lexer.EmailLexer;
 import emailvalidator4j.parser.exception.*;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import org.junit.runner.RunWith;
 
+@RunWith(DataProviderRunner.class)
 public class LocalPartTest {
     @Rule
     public ExpectedException exception = ExpectedException.none();
@@ -74,5 +79,42 @@ public class LocalPartTest {
         exception.expectMessage("Consecutive dots");
 
         parser.parse("with..dots@");
+    }
+
+    @Test
+    public void dotAtEnd() throws InvalidEmail {
+        LocalPart parser = this.getLocalPartParser();
+
+        exception.expect(DotAtEnd.class);
+        exception.expectMessage("Dot at the end of localpart");
+
+        parser.parse("withdot.@");
+    }
+
+    @Test
+    @UseDataProvider("invalidLocalPartText")
+    public void invalidToken(String invalidText) throws InvalidEmail {
+        LocalPart parser = this.getLocalPartParser();
+        exception.expect(ExpectedATEXT.class);
+
+        parser.parse(String.format("found%sat@",invalidText));
+    }
+
+    @DataProvider
+    public static Object[][] invalidLocalPartText() {
+        return new Object[][]{
+                {","},
+                {"<"},
+                {">"},
+                {"["},
+                {"]"},
+                {":"},
+                {";"},
+        };
+    }
+
+    private LocalPart getLocalPartParser() {
+        EmailLexer lexer = new EmailLexer();
+        return new LocalPart(lexer);
     }
 }

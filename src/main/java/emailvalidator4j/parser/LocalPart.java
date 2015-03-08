@@ -3,10 +3,7 @@ package emailvalidator4j.parser;
 import emailvalidator4j.lexer.EmailLexer;
 import emailvalidator4j.lexer.TokenInterface;
 import emailvalidator4j.lexer.Tokens;
-import emailvalidator4j.parser.exception.DotAtStart;
-import emailvalidator4j.parser.exception.ExpectedAT;
-import emailvalidator4j.parser.exception.ExpectedATEXT;
-import emailvalidator4j.parser.exception.InvalidEmail;
+import emailvalidator4j.parser.exception.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -39,11 +36,42 @@ public class LocalPart extends Parser {
             }
 
             this.checkConsecutiveDots();
+            this.checkForInvalidToken(closingQuote);
+
+//            $this->warnEscaping();
+//
+//            if ($this->isFWS()) {
+//                $this->parseFWS();
+//            }
 
             lexer.next();
         }
 
+        if (this.lexer.getPrevious().equals(Tokens.DOT)) {
+            throw new DotAtEnd("Dot at the end of localpart");
+        }
+//        $prev = $this->lexer->getPrevious();
+//        if (strlen($prev['value']) > EmailValidator::RFC5322_LOCAL_TOOLONG) {
+//            $this->warnings[] = EmailValidator::RFC5322_LOCAL_TOOLONG;
+//        }
+
         return this.lexer;
+    }
+
+    private void checkForInvalidToken(boolean closingQuote) throws InvalidEmail {
+        List<TokenInterface> forbidden = new ArrayList<TokenInterface>(Arrays.asList(
+                Tokens.COMMA,
+                Tokens.CLOSEBRACKET,
+                Tokens.OPENBRACKET,
+                Tokens.GREATERTHAN,
+                Tokens.LOWERTHAN,
+                Tokens.COLON,
+                Tokens.SEMICOLON
+        ));
+
+        if (forbidden.contains(this.lexer.getCurrent()) && !closingQuote) {
+            throw new ExpectedATEXT(String.format("Found %s, expeted ATEXT", this.lexer.getCurrent().getName()));
+        }
     }
 
     private boolean parseDoubleQuote() throws InvalidEmail{
