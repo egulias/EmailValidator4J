@@ -16,7 +16,9 @@ public class LocalPart extends Parser {
     LocalPart (EmailLexer lexer) {
         super(lexer);
     }
-    public EmailLexer parse(String localpart) throws InvalidEmail {
+
+    @Override
+    public void parse(String localpart) throws InvalidEmail {
 
         System.out.println(localpart);
         lexer.lex(localpart);
@@ -54,8 +56,6 @@ public class LocalPart extends Parser {
 //        if (strlen($prev['value']) > EmailValidator::RFC5322_LOCAL_TOOLONG) {
 //            $this->warnings[] = EmailValidator::RFC5322_LOCAL_TOOLONG;
 //        }
-
-        return this.lexer;
     }
 
     private void checkForInvalidToken(boolean closingQuote) throws InvalidEmail {

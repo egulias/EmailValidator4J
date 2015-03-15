@@ -17,7 +17,7 @@ public abstract class Parser {
         this.lexer = lexer;
     }
 
-    public abstract EmailLexer parse(String part) throws InvalidEmail;
+    public abstract void parse(String part) throws InvalidEmail;
 
     public List<Warnings> getWarnings() {
         return this.warnings;
@@ -114,17 +114,12 @@ public abstract class Parser {
         if (this.lexer.getCurrent().equals(Tokens.LF) || this.lexer.getCurrent().equals(Tokens.NUL)) {
             throw new ExpectedCTEXT("Expecting CTEXT");
         }
-//        $previous = $this->lexer->getPrevious();
-//
-//        if ($this->lexer->token['type'] === EmailLexer::S_LF || $this->lexer->token['type'] === EmailLexer::C_NUL) {
-//            throw new \InvalidArgumentException('ERR_EXPECTING_CTEXT');
-//        }
-//
-//        if ($this->lexer->isNextToken(EmailLexer::S_AT) || $previous['type']  === EmailLexer::S_AT) {
-//            $this->warnings[] = EmailValidator::DEPREC_CFWS_NEAR_AT;
-//        } else {
-//            $this->warnings[] = EmailValidator::CFWS_FWS;
-//        }
+
+        if (this.lexer.isNextToken(Tokens.AT) || this.lexer.getPrevious().equals(Tokens.AT)) {
+            this.warnings.add(Warnings.DEPRECATED_CFWS_NEAR_AT);
+        } else {
+            this.warnings.add(Warnings.CFWS_FWS);
+        }
     }
 
     private void checkCRLFInFWS() throws InvalidEmail {
@@ -141,4 +136,6 @@ public abstract class Parser {
             throw new CRLFAtEnd("CRLF at the end");
         }
     }
+
+
 }
