@@ -87,7 +87,7 @@ public class LocalPart extends Parser {
             parseAgain = false;
 
             if (special.contains(this.lexer.getCurrent()) && setSpecialsWarning) {
-                this.getWarnings().add(Warnings.CFWS_FWS);
+                this.warnings.add(Warnings.CFWS_FWS);
                 setSpecialsWarning = false;
             }
 

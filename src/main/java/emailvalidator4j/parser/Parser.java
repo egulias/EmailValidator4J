@@ -10,7 +10,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public abstract class Parser {
-    private List<Warnings> warnings = new ArrayList<Warnings>();
+    protected List<Warnings> warnings = new ArrayList<Warnings>();
     protected EmailLexer lexer;
 
     public Parser(EmailLexer lexer) {
@@ -136,6 +136,4 @@ public abstract class Parser {
             throw new CRLFAtEnd("CRLF at the end");
         }
     }
-
-
 }
