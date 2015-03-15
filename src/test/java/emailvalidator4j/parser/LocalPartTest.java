@@ -122,11 +122,35 @@ public class LocalPartTest {
     }
 
     @Test
-    public void cRLFAtEnd() throws InvalidEmail {
+    public void CRLFAtEnd() throws InvalidEmail {
         LocalPart parser = this.getLocalPartParser();
-        exception.expect(ConsecutiveCRLF.class);
+        exception.expect(CRLFAtEnd.class);
 
-        parser.parse("test\r\n\tat@");
+        parser.parse("test\r\nat@");
+    }
+
+    @Test
+    public void CRWithoutLF() throws InvalidEmail {
+        LocalPart parser = this.getLocalPartParser();
+        exception.expect(CRWithoutLF.class);
+
+        parser.parse("test\rat@");
+    }
+
+    @Test
+    public void ATEXTAfterCFWS() throws InvalidEmail {
+        LocalPart parser = this.getLocalPartParser();
+        exception.expect(ATEXTAfterCFWS.class);
+
+        parser.parse("test\r\n at@");
+    }
+
+    @Test
+    public void expectedCTEXT() throws InvalidEmail {
+        LocalPart parser = this.getLocalPartParser();
+        exception.expect(ExpectedCTEXT.class);
+
+        parser.parse("test\r\n \n@");
     }
 
     private LocalPart getLocalPartParser() {

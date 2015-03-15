@@ -103,18 +103,18 @@ public abstract class Parser {
 
     protected void parseFWS() throws InvalidEmail {
         this.checkCRLFInFWS();
+        if (this.lexer.getCurrent().equals(Tokens.CR)) {
+            throw new CRWithoutLF("Found CR but no LF");
+        }
 
+        if (this.lexer.isNextToken(Tokens.get("GENERIC")) && !this.lexer.getPrevious().equals(Tokens.AT)) {
+            throw new ATEXTAfterCFWS("ATEXT found after CFWS");
+        }
+
+        if (this.lexer.getCurrent().equals(Tokens.LF) || this.lexer.getCurrent().equals(Tokens.NUL)) {
+            throw new ExpectedCTEXT("Expecting CTEXT");
+        }
 //        $previous = $this->lexer->getPrevious();
-//
-//        $this->checkCRLFInFWS();
-//
-//        if ($this->lexer->token['type'] === EmailLexer::S_CR) {
-//            throw new \InvalidArgumentException("ERR_CR_NO_LF");
-//        }
-//
-//        if ($this->lexer->isNextToken(EmailLexer::GENERIC) && $previous['type']  !== EmailLexer::S_AT) {
-//            throw new \InvalidArgumentException("ERR_ATEXT_AFTER_CFWS");
-//        }
 //
 //        if ($this->lexer->token['type'] === EmailLexer::S_LF || $this->lexer->token['type'] === EmailLexer::C_NUL) {
 //            throw new \InvalidArgumentException('ERR_EXPECTING_CTEXT');
@@ -128,13 +128,17 @@ public abstract class Parser {
     }
 
     private void checkCRLFInFWS() throws InvalidEmail {
+        if (!this.lexer.getCurrent().equals(Tokens.CRLF)) {
+            return;
+        }
+
         if (this.lexer.getCurrent().equals(Tokens.CRLF)) {
             if (this.lexer.isNextToken(Tokens.CRLF)) {
                 throw new ConsecutiveCRLF("Consecutive CRLF");
             }
         }
-//        if (!$this->lexer->isNextTokenAny(array(EmailLexer::S_SP, EmailLexer::S_HTAB))) {
-//            throw new \InvalidArgumentException("ERR_FWS_CRLF_END");
-//        }
+        if (!this.lexer.isNextToken(new ArrayList<TokenInterface>(Arrays.asList(Tokens.SP, Tokens.HTAB)))) {
+            throw new CRLFAtEnd("CRLF at the end");
+        }
     }
 }
