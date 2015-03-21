@@ -93,18 +93,12 @@ public class DomainPart extends Parser {
             throw new ExpectedATEXT("Found OPENBRACKET");
         }
 
-//
-//        if ($this->lexer->token['type'] === EmailLexer::S_OPENQBRACKET && $prev['type'] !== EmailLexer::S_AT) {
-//            throw new \InvalidArgumentException('ERR_EXPECTING_ATEXT');
-//        }
-//
-//        if ($this->lexer->token['type'] === EmailLexer::S_HYPHEN && $this->lexer->isNextToken(EmailLexer::S_DOT)) {
-//            throw new \InvalidArgumentException('ERR_DOMAINHYPHENEND');
-//        }
-//
-//        if ($this->lexer->token['type'] === EmailLexer::S_BACKSLASH
-//                && $this->lexer->isNextToken(EmailLexer::GENERIC)) {
-//            throw new \InvalidArgumentException('ERR_EXPECTING_ATEXT');
-//        }
+        if (this.lexer.getCurrent().equals(Tokens.HYPHEN) && this.lexer.isNextToken(Tokens.DOT)) {
+            throw new DomainHyphen("Hypen found near dot");
+        }
+
+        if (this.lexer.getCurrent().equals(Tokens.BACKSLASH) && this.lexer.isNextToken(Tokens.get("GENERIC"))) {
+            throw new ExpectedATEXT("Found BACKSLASH");
+        }
     }
 }

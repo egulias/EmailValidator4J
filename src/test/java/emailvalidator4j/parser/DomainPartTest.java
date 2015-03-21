@@ -26,7 +26,7 @@ public class DomainPartTest {
 
     @DataProvider
     public static Object[][] invalidDomainParts() {
-        //No existance of Tokens.AT is controlled in a superior class
+        //No existence of Tokens.AT is controlled in a superior class
         return new Object[][]{
                 {DotAtStart.class, "@.atstart"},
                 {DomainHyphen.class, "@-atstart"},
@@ -42,6 +42,8 @@ public class DomainPartTest {
                 {DomainNotAllowedCharacter.class, "@a,start"},
                 {ConsecutiveAT.class, "@@start"},
                 {ExpectedATEXT.class, "@at[start"},
+                {DomainHyphen.class, "@atstart-.com"},
+                {ExpectedATEXT.class, "@atst\\art.com"},
         };
     }
 
