@@ -47,6 +47,22 @@ public class DomainPartTest {
         };
     }
 
+    @Test
+    @UseDataProvider("invalidDomainLiteralParts")
+    public void invalidDomainLiteralExceptions(Class type, String literalPart) throws InvalidEmail {
+        DomainPart parser = this.getDomainPartParser();
+        exception.expect(type);
+        parser.parse(literalPart);
+    }
+
+    @DataProvider
+    public static Object[][] invalidDomainLiteralParts() {
+        return new Object[][]{
+                {ExpectedDTEXT.class, "@[[127.0.0.1]"},
+                {CRWithoutLF.class, "@[\r127.0.0.1]"}
+        };
+    }
+
     private DomainPart getDomainPartParser() {
         EmailLexer lexer = new EmailLexer();
         return new DomainPart(lexer);
