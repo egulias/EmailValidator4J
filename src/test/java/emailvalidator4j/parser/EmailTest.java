@@ -25,4 +25,20 @@ public class EmailTest {
         exception.expect(NoLocalPart.class);
         parser.parse("nolocalpart.com");
     }
+
+    @Test
+    public void validEmailGetsParsedWithNoExceptions() throws InvalidEmail {
+        EmailLexer lexer = new EmailLexer();
+        Email parser = new Email(lexer);
+        parser.parse("valid@email.com");
+    }
+
+    @Test
+    public void invalidEmailGetsParsed() throws InvalidEmail {
+        EmailLexer lexer = new EmailLexer();
+        Email parser = new Email(lexer);
+
+        exception.expect(InvalidEmail.class);
+        parser.parse("inva@lid@email.com");
+    }
 }
