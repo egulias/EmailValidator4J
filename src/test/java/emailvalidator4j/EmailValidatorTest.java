@@ -24,9 +24,34 @@ public class EmailValidatorTest {
         Assert.assertFalse(validator.isValid(email));
     }
 
+    @DataProvider
+    public static Object[][] validEmailsProvider() {
+        return new Object[][] {
+                {"example@example.com"},
+                {"example@example.co.uk"},
+                {"example_underscore@example.fr"},
+                {"example@localhost"},
+                {"exam\\'ple@example.com"},
+                {"exam\\ ple@example.com"},
+                {"example((example))@fakedfake.co.uk"},
+                {"example@faked(fake).co.uk"},
+                {"example+@example.com"},
+                {"инфо@письмо.рф"},
+                {"\"username\"@example.com"},
+                {"\"user,name\"@example.com"},
+                {"\"user name\"@example.com"},
+                {"\"user@name\"@example.com"},
+                {"\"\\a\"@iana.org"},
+                {"\"test\\ test\"@iana.org"},
+                {"\"\"@iana.org"},
+                {String.format("\"\\%s\"@iana.org", "\"")},
+        };
+    }
+
     @Test
-    public void isValidEmail() {
+    @UseDataProvider("validEmailsProvider")
+    public void isValidEmail(String validEmail) {
         EmailValidator validator = new EmailValidator();
-        Assert.assertTrue("Is a valid email", validator.isValid("test@test.com"));
+        Assert.assertTrue(validEmail + " is a valid email", validator.isValid(validEmail));
     }
 }

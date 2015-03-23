@@ -1,6 +1,7 @@
 package emailvalidator4j.parser;
 
 import emailvalidator4j.lexer.EmailLexer;
+import emailvalidator4j.lexer.Token;
 import emailvalidator4j.lexer.TokenInterface;
 import emailvalidator4j.lexer.Tokens;
 import emailvalidator4j.parser.exception.*;
@@ -19,8 +20,7 @@ public class LocalPart extends Parser {
 
     @Override
     public void parse(String localpart) throws InvalidEmail {
-
-        System.out.println(localpart);
+        String parsedLocalPart = "";
         lexer.lex(localpart);
         if (this.lexer.getCurrent().equals(Tokens.DOT)) {
             throw new DotAtStart("Found DOT at start");
@@ -74,7 +74,7 @@ public class LocalPart extends Parser {
         }
     }
 
-    private boolean parseDoubleQuote() throws InvalidEmail{
+    private boolean parseDoubleQuote() throws InvalidEmail {
         boolean parseAgain = true;
         boolean setSpecialsWarning = true;
 
@@ -83,7 +83,10 @@ public class LocalPart extends Parser {
         List<TokenInterface> special =
                 new ArrayList<TokenInterface>(Arrays.asList(Tokens.CR, Tokens.HTAB, Tokens.LF));
 
-        while (!this.lexer.getCurrent().equals(Tokens.DQUOTE) && !this.lexer.isAtEnd()) {
+        while (!this.lexer.getCurrent().equals(Tokens.DQUOTE) &&
+                        !this.lexer.isAtEnd() ||
+                        (this.lexer.getCurrent().equals(Tokens.DQUOTE) && this.lexer.getPrevious().equals(Tokens.BACKSLASH))
+                ) {
             parseAgain = false;
 
             if (special.contains(this.lexer.getCurrent()) && setSpecialsWarning) {

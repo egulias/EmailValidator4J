@@ -13,7 +13,7 @@ public class Email {
     private final LocalPart localPartParser;
     private final DomainPart domainPartParser;
 
-    Email(EmailLexer lexer) {
+    public Email(EmailLexer lexer) {
         this.lexer = lexer;
         this.localPartParser = new LocalPart(lexer);
         this.domainPartParser = new DomainPart(lexer);
@@ -26,9 +26,20 @@ public class Email {
             throw new NoLocalPart("No local part found");
         }
 
-        String[] parts = email.split("@", 2);
+        String[] parts = email.split("@");
+        String domainPart = '@' + parts[parts.length - 1];
+        String localPart = this.composeLocalPart(parts);
 
-        this.localPartParser.parse(parts[0] + '@');
-        this.domainPartParser.parse('@' + parts[1]);
+        this.localPartParser.parse(localPart);
+        this.domainPartParser.parse(domainPart);
+    }
+
+    private String composeLocalPart(String[] parts) {
+        String localPart = "";
+        for (int i = 0; i < parts.length - 1; i++) {
+            localPart += parts[i] + '@';
+        }
+
+        return localPart;
     }
 }
