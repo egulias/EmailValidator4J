@@ -45,9 +45,9 @@ public abstract class Parser {
             this.lexer.next();
         }
 
-//        if (this.lexer.isNextToken(array(EmailLexer::GENERIC, EmailLexer::S_EMPTY))) {
-//            throw new \InvalidArgumentException('ERR_EXPECTING_ATEXT');
-//        }
+        if (this.lexer.isNextToken(Tokens.get("GENERIC"))) {
+            throw new ATEXTAfterComment("");
+        }
 
         if (this.lexer.isNextToken(Tokens.AT)) {
             this.warnings.add(Warnings.DEPRECATED_CFWS_NEAR_AT);

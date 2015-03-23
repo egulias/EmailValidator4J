@@ -20,7 +20,6 @@ public class LocalPart extends Parser {
 
     @Override
     public void parse(String localpart) throws InvalidEmail {
-        String parsedLocalPart = "";
         lexer.lex(localpart);
         if (this.lexer.getCurrent().equals(Tokens.DOT)) {
             throw new DotAtStart("Found DOT at start");
@@ -44,6 +43,12 @@ public class LocalPart extends Parser {
 
             if (this.isFWS()) {
                 this.parseFWS();
+            }
+
+            if (this.lexer.getCurrent().equals(Tokens.BACKSLASH)) {
+                if (!this.escaped()) {
+                    throw new ExpectedATEXT("Found BACKSLASH");
+                }
             }
 
             lexer.next();
@@ -83,10 +88,7 @@ public class LocalPart extends Parser {
         List<TokenInterface> special =
                 new ArrayList<TokenInterface>(Arrays.asList(Tokens.CR, Tokens.HTAB, Tokens.LF));
 
-        while (!this.lexer.getCurrent().equals(Tokens.DQUOTE) &&
-                        !this.lexer.isAtEnd() ||
-                        (this.lexer.getCurrent().equals(Tokens.DQUOTE) && this.lexer.getPrevious().equals(Tokens.BACKSLASH))
-                ) {
+        while (!this.lexer.getCurrent().equals(Tokens.DQUOTE) && !this.lexer.isAtEnd()) {
             parseAgain = false;
 
             if (special.contains(this.lexer.getCurrent()) && setSpecialsWarning) {

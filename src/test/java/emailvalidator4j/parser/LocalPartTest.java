@@ -45,6 +45,7 @@ public class LocalPartTest {
         exception.expect(UnclosedDQUOTE.class);
         exception.expectMessage("Unclosed DQUOTE");
 
+        System.out.println(String.format("at%sstart%s%s@", "\"", "\\", "\""));
         parser.parse(String.format("at%sstart%s%s@", "\"", "\\", "\""));
     }
 
@@ -57,6 +58,16 @@ public class LocalPartTest {
         exception.expectMessage("Expected AT after quoted part");
 
         parser.parse("at\"start\"test@");
+    }
+
+    @Test
+    public void expectedATEXTAfterCFWS() throws InvalidEmail {
+        EmailLexer lexer = new EmailLexer();
+        LocalPart parser = new LocalPart(lexer);
+
+        exception.expect(ATEXTAfterComment.class);
+
+        parser.parse("at(start)test@");
     }
 
     @Test
@@ -110,6 +121,7 @@ public class LocalPartTest {
                 {"]"},
                 {":"},
                 {";"},
+                {"\\"},
         };
     }
 

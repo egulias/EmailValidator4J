@@ -14,6 +14,46 @@ public class EmailValidatorTest {
     public static Object[][] invalidEmailProvider() {
         return new Object[][]{
                 {"nolocalpart.com"},
+                {"test@example.com test"},
+                {"user  name@example.com"},
+                {"user   name@example.com"},
+                {"example.@example.co.uk"},
+                {"example@example@example.co.uk"},
+                {"(test_exampel@example.fr}"},
+                {"example(example)example@example.co.uk"},
+                {".example@localhost"},
+                {"ex\\ample@localhost"},
+                {"example@local\\host"},
+                {"example@localhost."},
+                {"user name@example.com"},
+                {"username@ example . com"},
+                {"example@(fake}.com"},
+                {"example@(fake.com"},
+                {"username@example,com"},
+                {"usern,ame@example.com"},
+                {"user[na]me@example.com"},
+                {"\"\"\"@iana.org"},
+                {"\"\\\"@iana.org"},
+                {"\"test\"test@iana.org"},
+                {"\"test\"\"test\"@iana.org"},
+                {"\"test\".\"test\"@iana.org"},
+                {"\"test\".test@iana.org"},
+                {"\"test\"" + String.valueOf(Character.toChars(0)) + "@iana.org"},
+                {"\"test\"@iana.org"},
+                {String.valueOf(Character.toChars(256)) + "@iana.org"},
+                {"test@" + String.valueOf(Character.toChars(226)) + ".org"},
+                {"\r\ntest@iana.org"},
+                {"\r\n test@iana.org"},
+                {"\r\n \r\ntest@iana.org"},
+                {"\r\n \r\ntest@iana.org"},
+                {"\r\n \r\n test@iana.org"},
+                {"test@iana.org \r\n"},
+                {"test@iana.org \r\n "},
+                {"test@iana.org \r\n \r\n"},
+                {"test@iana.org \r\n\r\n"},
+                {"test@iana.org  \r\n\r\n "},
+                {"test@iana/icann.org"},
+                {"test@foo;bar.com"},
         };
     }
 
@@ -21,7 +61,7 @@ public class EmailValidatorTest {
     @UseDataProvider("invalidEmailProvider")
     public void isInvalidEmail(String email) {
         EmailValidator validator = new EmailValidator();
-        Assert.assertFalse(validator.isValid(email));
+        Assert.assertFalse(email + " is an invalid email", validator.isValid(email));
     }
 
     @DataProvider

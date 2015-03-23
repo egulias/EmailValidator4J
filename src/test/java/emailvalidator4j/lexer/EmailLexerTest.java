@@ -3,8 +3,11 @@ package emailvalidator4j.lexer;
 import com.tngtech.java.junit.dataprovider.DataProvider;
 import com.tngtech.java.junit.dataprovider.DataProviderRunner;
 import com.tngtech.java.junit.dataprovider.UseDataProvider;
+import emailvalidator4j.lexer.exception.TokenNotFound;
 import org.junit.Assert;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 
 import java.util.ArrayList;
@@ -12,6 +15,9 @@ import java.util.Arrays;
 
 @RunWith(DataProviderRunner.class)
 public class EmailLexerTest {
+    @Rule
+    public ExpectedException exception = ExpectedException.none();
+
     @DataProvider
     public static Object[][] tokensStringsProvider() {
         return new Object[][] {
@@ -132,5 +138,21 @@ public class EmailLexerTest {
         lexer.lex("foo@bar.com");
         lexer.next();
         Assert.assertTrue(lexer.getPrevious().equals(Tokens.get("foo")));
+    }
+
+    @Test
+    public void moveToExistingToken() {
+        EmailLexer lexer = new EmailLexer();
+        lexer.lex("foo@bar.com");
+        lexer.moveTo(Tokens.AT);
+        Assert.assertTrue(lexer.getCurrent().equals(Tokens.AT));
+    }
+
+    @Test
+    public void moveToUnexistingToken() throws TokenNotFound {
+        EmailLexer lexer = new EmailLexer();
+        lexer.lex("foobar.com");
+        exception.expect(TokenNotFound.class);
+        lexer.moveTo(Tokens.AT);
     }
 }

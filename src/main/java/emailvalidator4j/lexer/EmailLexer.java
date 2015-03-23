@@ -1,5 +1,7 @@
 package emailvalidator4j.lexer;
 
+import emailvalidator4j.lexer.exception.TokenNotFound;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -12,7 +14,9 @@ public class EmailLexer {
     private final List<TokenInterface> tokens = new ArrayList<TokenInterface>();
 
     public void lex(String input) {
-        Pattern pattern = Pattern.compile("([a-zA-Z_]+[46]?)|([0-9]+)|(\r\n)|(::)|(\\s+?)|(.)");
+        Pattern pattern = Pattern.compile(
+                "([a-zA-Z_]+[46]?)|([0-9]+)|(\r\n)|(::)|(\\s+?)|(.)", Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE
+        );
         Matcher matcher = pattern.matcher(input);
 
         this.reset();
@@ -76,6 +80,21 @@ public class EmailLexer {
             lookahead++;
         }
         return false;
+    }
+
+    public void moveTo(TokenInterface token) throws TokenNotFound {
+        if (this.tokens.size() <= this.position + 1) {
+            return;
+        }
+
+        while (this.position < this.tokens.size()) {
+            if (token.equals(this.tokens.get(this.position))) {
+                return;
+            }
+            this.next();
+        }
+
+        throw new TokenNotFound();
     }
 
     public TokenInterface getPrevious() {

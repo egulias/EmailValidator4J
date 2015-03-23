@@ -13,6 +13,7 @@ public class DomainPart extends Parser {
     @Override
     public void parse(String domainPart) throws InvalidEmail {
         this.lexer.lex(domainPart);
+        this.lexer.moveTo(Tokens.AT);
         this.lexer.next();
 
         if (this.lexer.getCurrent().equals(Tokens.DOT)) {
@@ -29,7 +30,6 @@ public class DomainPart extends Parser {
     private String doParseDomainPart() throws InvalidEmail {
         String domain = "";
         do {
-//            System.out.println(this.lexer.getCurrent().getName());
             if (this.lexer.getCurrent().equals(Tokens.SEMICOLON)) {
                 throw new ExpectedATEXT("Expected ATEXT");
             }
