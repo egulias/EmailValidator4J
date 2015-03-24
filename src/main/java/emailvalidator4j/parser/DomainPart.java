@@ -12,8 +12,8 @@ public class DomainPart extends Parser {
 
     @Override
     public void parse(String domainPart) throws InvalidEmail {
-        this.lexer.lex(domainPart);
-        this.lexer.moveTo(Tokens.AT);
+//        this.lexer.lex(domainPart);
+//        this.lexer.moveTo(Tokens.AT);
         this.lexer.next();
 
         if (this.lexer.getCurrent().equals(Tokens.DOT)) {
@@ -25,6 +25,14 @@ public class DomainPart extends Parser {
         }
 
         String parsedDomain = this.doParseDomainPart();
+
+        if (this.lexer.getPrevious().equals(Tokens.DOT)) {
+            throw new DotAtEnd("");
+        }
+
+        if (this.lexer.getPrevious().equals(Tokens.SP)) {
+            throw new CRLFAtEnd("");
+        }
     }
 
     private String doParseDomainPart() throws InvalidEmail {

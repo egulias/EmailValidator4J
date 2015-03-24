@@ -45,7 +45,7 @@ public class LocalPart extends Parser {
                 this.parseFWS();
             }
 
-            if (this.lexer.getCurrent().equals(Tokens.BACKSLASH)) {
+            if (this.lexer.getPrevious().equals(Tokens.BACKSLASH)) {
                 if (!this.escaped()) {
                     throw new ExpectedATEXT("Found BACKSLASH");
                 }
@@ -105,9 +105,7 @@ public class LocalPart extends Parser {
 
         if (this.lexer.getPrevious().equals(Tokens.BACKSLASH)) {
            this.checkDoubleQuote(false);
-        }
-
-        if (!this.lexer.isNextToken(Tokens.AT)) {
+        } else if (!this.lexer.isNextToken(Tokens.AT)) {
             throw new ExpectedAT("Expected AT after quoted part");
         }
 

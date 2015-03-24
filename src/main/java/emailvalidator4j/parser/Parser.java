@@ -33,7 +33,7 @@ public abstract class Parser {
     }
 
     protected boolean escaped() {
-        return this.lexer.getPrevious().equals(Tokens.BACKSLASH) && !this.lexer.equals(Tokens.get("GENERIC"));
+        return this.lexer.getPrevious().equals(Tokens.BACKSLASH) && !this.lexer.getCurrent().equals(Tokens.get("GENERIC"));
     }
 
     protected void parseComment() throws InvalidEmail {

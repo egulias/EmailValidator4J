@@ -155,4 +155,12 @@ public class EmailLexerTest {
         exception.expect(TokenNotFound.class);
         lexer.moveTo(Tokens.AT);
     }
+
+    @Test
+    public void toStringReturnsLeftTokens() {
+        EmailLexer lexer = new EmailLexer();
+        lexer.lex("foo@bar.com");
+        lexer.moveTo(Tokens.AT);
+        Assert.assertTrue("@bar.com".equals(lexer.toString()));
+    }
 }

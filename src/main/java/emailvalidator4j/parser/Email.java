@@ -26,21 +26,7 @@ public class Email {
             throw new NoLocalPart("No local part found");
         }
 
-//        String[] parts = email.split("@");
-//        String domainPart = '@' + parts[parts.length - 1];
-//        String localPart = this.composeLocalPart(parts);
-//        System.out.println(localPart);
-
         this.localPartParser.parse(email);
         this.domainPartParser.parse(email);
-    }
-
-    private String composeLocalPart(String[] parts) {
-        String localPart = "";
-        for (int i = 0; i < parts.length - 1; i++) {
-            localPart += parts[i] + '@';
-        }
-
-        return localPart;
     }
 }

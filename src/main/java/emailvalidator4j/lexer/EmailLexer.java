@@ -29,6 +29,9 @@ public class EmailLexer {
         }
     }
 
+    /**
+     * Warning! This method IS NOT side effect free, it changes lexer state.
+     */
     private void reset() {
         this.position = 0;
         this.current = Optional.empty();
@@ -39,6 +42,9 @@ public class EmailLexer {
         return this.current.orElse(new Token("", ""));
     }
 
+    /**
+     * Warning! This method IS NOT side effect free, it changes lexer state.
+     */
     public void next() {
         this.position ++;
         if (!this.isAtEnd()) {
@@ -82,6 +88,9 @@ public class EmailLexer {
         return false;
     }
 
+    /**
+     * Warning! This method IS NOT side effect free, it changes lexer state.
+     */
     public void moveTo(TokenInterface token) throws TokenNotFound {
         if (this.tokens.size() <= this.position + 1) {
             return;
@@ -98,7 +107,20 @@ public class EmailLexer {
     }
 
     public TokenInterface getPrevious() {
-        int previousPosition = this.position - 1 >= 0 ?this.position - 1 : 0;
+        int previousPosition = this.position - 1 >= 0 ? this.position - 1 : 0;
         return this.tokens.get(previousPosition);
+    }
+
+    @Override
+    public String toString() {
+        int tempPosition = this.position;
+        String tokensTexts = "";
+
+        while (tempPosition < this.tokens.size()) {
+            tokensTexts += this.tokens.get(tempPosition).getText();
+            tempPosition++;
+        }
+
+        return tokensTexts;
     }
 }

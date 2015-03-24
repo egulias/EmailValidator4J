@@ -19,7 +19,7 @@ public class DomainPartTest {
     @Test
     @UseDataProvider("invalidDomainParts")
     public void invalidPartThrowsException(Class type, String domainPart) throws InvalidEmail {
-        DomainPart parser = this.getDomainPartParser();
+        DomainPart parser = this.getDomainPartParser(domainPart);
         exception.expect(type);
         parser.parse(domainPart);
     }
@@ -50,7 +50,7 @@ public class DomainPartTest {
     @Test
     @UseDataProvider("invalidDomainLiteralParts")
     public void invalidDomainLiteralExceptions(Class type, String literalPart) throws InvalidEmail {
-        DomainPart parser = this.getDomainPartParser();
+        DomainPart parser = this.getDomainPartParser(literalPart);
         exception.expect(type);
         parser.parse(literalPart);
     }
@@ -63,8 +63,9 @@ public class DomainPartTest {
         };
     }
 
-    private DomainPart getDomainPartParser() {
+    private DomainPart getDomainPartParser(String domainPart) {
         EmailLexer lexer = new EmailLexer();
+        lexer.lex(domainPart);
         return new DomainPart(lexer);
     }
 }

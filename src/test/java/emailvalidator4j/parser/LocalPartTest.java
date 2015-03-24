@@ -45,7 +45,6 @@ public class LocalPartTest {
         exception.expect(UnclosedDQUOTE.class);
         exception.expectMessage("Unclosed DQUOTE");
 
-        System.out.println(String.format("at%sstart%s%s@", "\"", "\\", "\""));
         parser.parse(String.format("at%sstart%s%s@", "\"", "\\", "\""));
     }
 
