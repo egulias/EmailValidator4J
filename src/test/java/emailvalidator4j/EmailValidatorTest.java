@@ -59,7 +59,7 @@ public class EmailValidatorTest {
     @UseDataProvider("invalidEmailProvider")
     public void isInvalidEmail(String email) {
         EmailValidator validator = new EmailValidator();
-        Assert.assertFalse(email + " is an invalid email", validator.isValid("test@iana.org \r\n "));
+        Assert.assertFalse(email + " is an invalid email", validator.isValid(email));
     }
 
     @DataProvider
