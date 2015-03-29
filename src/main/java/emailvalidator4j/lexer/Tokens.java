@@ -29,8 +29,10 @@ public enum Tokens implements TokenInterface {
     CLOSEQBRACKET("CLOSEQBRACKET", "}"),
     NUL("NUL", "\0");
 
-    private static final HashMap<String, TokenInterface> tokensMap = new HashMap<String, TokenInterface>();
+    public static final String GENERIC = "GENERIC";
+    public static final String INVALID = "INVALID";
 
+    private static final HashMap<String, TokenInterface> tokensMap = new HashMap<String, TokenInterface>();
     private final String name;
     private final String text;
 
@@ -47,7 +49,7 @@ public enum Tokens implements TokenInterface {
 
     public static TokenInterface get(String value) {
         final TokenInterface token = tokensMap.get(value);
-        return token != null ? token : new Token("GENERIC", value);
+        return token != null ? token : new Token(GENERIC, value);
     }
 
     public boolean equals(TokenInterface that) {

@@ -1,6 +1,7 @@
 package emailvalidator4j.lexer;
 
 import emailvalidator4j.lexer.exception.TokenNotFound;
+import emailvalidator4j.parser.Parser;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,7 +22,14 @@ public class EmailLexer {
 
         this.reset();
         while(matcher.find()) {
-            this.tokens.add(Tokens.get(input.substring(matcher.start(), matcher.end())));
+            String text = input.substring(matcher.start(), matcher.end());
+
+            if (this.isUTF8Invalid(text)) {
+                this.tokens.add(Tokens.get(Tokens.INVALID));
+            } else {
+                this.tokens.add(Tokens.get(text));
+            }
+
         }
 
         if (!this.tokens.isEmpty()) {
@@ -36,6 +44,13 @@ public class EmailLexer {
         this.position = 0;
         this.current = Optional.empty();
         this.tokens.clear();
+    }
+
+    private boolean isUTF8Invalid(String match) {
+        Pattern pattern = Pattern.compile("\\p{Cc}+", Pattern.UNICODE_CASE | Pattern.CASE_INSENSITIVE);
+        Matcher matcher = pattern.matcher(match);
+
+        return matcher.find();
     }
 
     public TokenInterface getCurrent() {

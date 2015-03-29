@@ -10,8 +10,11 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @RunWith(DataProviderRunner.class)
 public class EmailLexerTest {
@@ -20,7 +23,7 @@ public class EmailLexerTest {
 
     @DataProvider
     public static Object[][] tokensStringsProvider() {
-        return new Object[][] {
+        return new Object[][]{
                 {"@", Tokens.AT},
                 {"(", Tokens.OPENPARETHESIS},
                 {")", Tokens.CLOSEPARENTHESIS},
@@ -162,5 +165,66 @@ public class EmailLexerTest {
         lexer.lex("foo@bar.com");
         lexer.moveTo(Tokens.AT);
         Assert.assertTrue("@bar.com".equals(lexer.toString()));
+    }
+
+    @Test
+    @UseDataProvider("invalidUTF8StringsProvider")
+    public void invalidUTF8CharsAreInvalidTokens(String utf8String) throws Exception {
+        EmailLexer lexer = new EmailLexer();
+
+        lexer.lex(utf8String.concat("@bar.com"));
+        Assert.assertTrue(lexer.getCurrent().equals(Tokens.get(Tokens.INVALID)));
+    }
+
+    @DataProvider
+    public static Object[][] invalidUTF8StringsProvider() throws Exception {
+        ArrayList<ArrayList<String>> invalidStrings = new ArrayList<>();
+        Pattern pattern1 = Pattern.compile("(?=\\p{Cc})(?=[^\\t\\n\\n\\r])", Pattern.UNICODE_CASE | Pattern.CASE_INSENSITIVE);
+        Pattern pattern2 = Pattern.compile("\\x{0000}", Pattern.UNICODE_CASE | Pattern.CASE_INSENSITIVE);
+
+        for (int i = 0; i < 0x100; i++) {
+            String utf8String = utf8Char(i);
+            Matcher matcher1 = pattern1.matcher(utf8String);
+            Matcher matcher2 = pattern2.matcher(utf8String);
+            if (matcher1.find() && !matcher2.find()){
+                ArrayList<String> tmp = new ArrayList<>();
+                tmp.add(utf8String);
+                invalidStrings.add(tmp);
+            }
+        }
+        String[][] array = new String[invalidStrings.size()][];
+        for (int i = 0; i < invalidStrings.size(); i++) {
+            ArrayList<String> row = invalidStrings.get(i);
+            array[i] = row.toArray(new String[row.size()]);
+        }
+
+        return array;
+    }
+
+    private static String utf8Char(int codePoint) throws Exception{
+        String utf8String = "";
+
+        if (codePoint < 0 || 0x10FFFF < codePoint || (0xD800 <= codePoint && codePoint <= 0xDFFF)) {
+            return  utf8String;
+        } else if (codePoint < 0x80) {
+            byte b[] = {(byte) codePoint};
+            utf8String = new String(b, StandardCharsets.UTF_8);
+            System.out.println(utf8String);
+        } else if (codePoint < 0x800) {
+            byte b[] = {(byte) (0x1C0 | codePoint >> 6), (byte) (0x80 | codePoint & 0x3F)};
+            utf8String = new String(b, StandardCharsets.UTF_8);
+        } else if (codePoint < 0x10000) {
+            byte b[] = {(byte)(0xE0 | codePoint >> 12), (byte)(0x80 | codePoint >> 6 & 0x3F), (byte)(0x80 | codePoint & 0x3F)};
+            utf8String = new String(b, StandardCharsets.UTF_8);
+        } else {
+            byte b[] = {
+                    (byte)(0xF0 | codePoint >> 18),
+                    (byte)(0x80 | codePoint >> 12 & 0x3F),
+                    (byte)(0x80 | codePoint >> 6 & 0x3F),
+                    (byte)(0x80 | codePoint  & 0x3F)
+            };
+            utf8String = new String(b, StandardCharsets.UTF_8);
+        }
+        return utf8String;
     }
 }

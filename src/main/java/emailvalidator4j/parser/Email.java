@@ -27,6 +27,6 @@ public class Email {
         }
 
         this.localPartParser.parse(email);
-        this.domainPartParser.parse(email);
+        this.domainPartParser.parse(this.lexer.toString());
     }
 }
