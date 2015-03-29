@@ -171,9 +171,11 @@ public class EmailLexerTest {
     @UseDataProvider("invalidUTF8StringsProvider")
     public void invalidUTF8CharsAreInvalidTokens(String utf8String) throws Exception {
         EmailLexer lexer = new EmailLexer();
-
         lexer.lex(utf8String.concat("@bar.com"));
-        Assert.assertTrue(lexer.getCurrent().equals(Tokens.get(Tokens.INVALID)));
+        Assert.assertTrue(
+                utf8String.concat("@bar.com") + " has INVALID tokens",
+                lexer.getCurrent().equals(Tokens.get(utf8String))
+        );
     }
 
     @DataProvider
@@ -201,7 +203,7 @@ public class EmailLexerTest {
         return array;
     }
 
-    private static String utf8Char(int codePoint) throws Exception{
+    private static String utf8Char(int codePoint) throws Exception {
         String utf8String = "";
 
         if (codePoint < 0 || 0x10FFFF < codePoint || (0xD800 <= codePoint && codePoint <= 0xDFFF)) {
@@ -209,7 +211,6 @@ public class EmailLexerTest {
         } else if (codePoint < 0x80) {
             byte b[] = {(byte) codePoint};
             utf8String = new String(b, StandardCharsets.UTF_8);
-            System.out.println(utf8String);
         } else if (codePoint < 0x800) {
             byte b[] = {(byte) (0x1C0 | codePoint >> 6), (byte) (0x80 | codePoint & 0x3F)};
             utf8String = new String(b, StandardCharsets.UTF_8);
@@ -226,5 +227,12 @@ public class EmailLexerTest {
             utf8String = new String(b, StandardCharsets.UTF_8);
         }
         return utf8String;
+    }
+
+    @Test
+    public void hasInvalidTokens() {
+        EmailLexer lexer = new EmailLexer();
+        lexer.lex((char) 1 + "@bar.com");
+        Assert.assertTrue(lexer.hasInvalidTokens());
     }
 }

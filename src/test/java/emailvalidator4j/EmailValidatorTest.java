@@ -52,6 +52,7 @@ public class EmailValidatorTest {
                 {"test@iana.org  \r\n\r\n "},
                 {"test@iana/icann.org"},
                 {"test@foo;bar.com"},
+                {(char) 1 + "a@test.com"}
         };
     }
 

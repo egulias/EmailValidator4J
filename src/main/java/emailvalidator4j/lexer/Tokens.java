@@ -1,6 +1,8 @@
 package emailvalidator4j.lexer;
 
 import java.util.HashMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public enum Tokens implements TokenInterface {
     OPENPARETHESIS("OPENPARETHESIS", "("),
@@ -49,7 +51,23 @@ public enum Tokens implements TokenInterface {
 
     public static TokenInterface get(String value) {
         final TokenInterface token = tokensMap.get(value);
-        return token != null ? token : new Token(GENERIC, value);
+        if (null != token) {
+            return token;
+        }
+
+        if (isUTF8Invalid(value)) {
+            return new Token(INVALID, value);
+        }
+
+        return new Token(GENERIC, value);
+
+    }
+
+    private static boolean isUTF8Invalid(String match) {
+        Pattern pattern = Pattern.compile("\\p{Cc}+", Pattern.UNICODE_CASE | Pattern.CASE_INSENSITIVE);
+        Matcher matcher = pattern.matcher(match);
+
+        return matcher.find();
     }
 
     public boolean equals(TokenInterface that) {

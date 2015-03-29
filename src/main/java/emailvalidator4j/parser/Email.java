@@ -3,6 +3,7 @@ package emailvalidator4j.parser;
 import emailvalidator4j.lexer.EmailLexer;
 import emailvalidator4j.lexer.Tokens;
 import emailvalidator4j.parser.exception.DomainHyphen;
+import emailvalidator4j.parser.exception.InvalidCharacters;
 import emailvalidator4j.parser.exception.InvalidEmail;
 import emailvalidator4j.parser.exception.NoLocalPart;
 
@@ -24,6 +25,10 @@ public class Email {
 
         if (!this.lexer.find(Tokens.AT)) {
             throw new NoLocalPart("No local part found");
+        }
+
+        if (this.lexer.hasInvalidTokens()) {
+            throw new InvalidCharacters("Found invalid or malformed characters");
         }
 
         this.localPartParser.parse(email);

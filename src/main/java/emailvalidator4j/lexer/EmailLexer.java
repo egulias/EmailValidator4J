@@ -10,6 +10,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class EmailLexer {
+    private boolean invalidTokens = false;
     private int position = 0;
     private Optional<TokenInterface> current = Optional.empty();
     private final List<TokenInterface> tokens = new ArrayList<TokenInterface>();
@@ -23,13 +24,13 @@ public class EmailLexer {
         this.reset();
         while(matcher.find()) {
             String text = input.substring(matcher.start(), matcher.end());
+            TokenInterface token = Tokens.get(text);
 
-            if (this.isUTF8Invalid(text)) {
-                this.tokens.add(Tokens.get(Tokens.INVALID));
-            } else {
-                this.tokens.add(Tokens.get(text));
+            if (this.isInvalidToken(token)) {
+                this.invalidTokens = true;
             }
 
+            this.tokens.add(Tokens.get(text));
         }
 
         if (!this.tokens.isEmpty()) {
@@ -44,13 +45,11 @@ public class EmailLexer {
         this.position = 0;
         this.current = Optional.empty();
         this.tokens.clear();
+        this.invalidTokens = false;
     }
 
-    private boolean isUTF8Invalid(String match) {
-        Pattern pattern = Pattern.compile("\\p{Cc}+", Pattern.UNICODE_CASE | Pattern.CASE_INSENSITIVE);
-        Matcher matcher = pattern.matcher(match);
-
-        return matcher.find();
+    private boolean isInvalidToken(TokenInterface token) {
+        return token.getName().equals(Tokens.INVALID);
     }
 
     public TokenInterface getCurrent() {
@@ -124,6 +123,10 @@ public class EmailLexer {
     public TokenInterface getPrevious() {
         int previousPosition = this.position - 1 >= 0 ? this.position - 1 : 0;
         return this.tokens.get(previousPosition);
+    }
+
+    public boolean hasInvalidTokens() {
+        return this.invalidTokens;
     }
 
     @Override
