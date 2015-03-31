@@ -11,6 +11,7 @@ import java.util.regex.Pattern;
 
 public class EmailLexer {
     private boolean invalidTokens = false;
+    private String lexedText = "";
     private int position = 0;
     private Optional<TokenInterface> current = Optional.empty();
     private final List<TokenInterface> tokens = new ArrayList<TokenInterface>();
@@ -35,6 +36,7 @@ public class EmailLexer {
 
         if (!this.tokens.isEmpty()) {
             this.current = Optional.of(this.tokens.get(this.position));
+            this.lexedText += this.tokens.get(this.position).getText();
         }
     }
 
@@ -42,6 +44,7 @@ public class EmailLexer {
      * Warning! This method IS NOT side effect free, it changes lexer state.
      */
     private void reset() {
+        this.lexedText = "";
         this.position = 0;
         this.current = Optional.empty();
         this.tokens.clear();
@@ -63,6 +66,7 @@ public class EmailLexer {
         this.position ++;
         if (!this.isAtEnd()) {
             this.current = Optional.of(this.tokens.get(this.position));
+            this.lexedText += this.tokens.get(this.position).getText();
         }
     }
 
@@ -127,6 +131,10 @@ public class EmailLexer {
 
     public boolean hasInvalidTokens() {
         return this.invalidTokens;
+    }
+
+    public String lexedText() {
+        return this.lexedText;
     }
 
     @Override

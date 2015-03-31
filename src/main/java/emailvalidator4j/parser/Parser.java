@@ -79,9 +79,8 @@ public abstract class Parser {
         if (this.lexer.isNextToken(Tokens.get("GENERIC")) && this.lexer.getPrevious().equals(Tokens.get("GENERIC"))) {
 //            throw new \InvalidArgumentException('ERR_EXPECTING_ATEXT');
         }
-//
-//        $this.warnings[] = EmailValidator::RFC5321_QUOTEDSTRING;
-//        try {
+
+        this.warnings.add(Warnings.RFC5321_QUOTEDSTRING);
         hasClosingQuote = this.lexer.find(Tokens.DQUOTE);
         if (!hasClosingQuote) {
             throw new UnclosedDQUOTE("Unclosed DQUOTE");

@@ -5,10 +5,14 @@ import com.tngtech.java.junit.dataprovider.DataProviderRunner;
 import com.tngtech.java.junit.dataprovider.UseDataProvider;
 import emailvalidator4j.lexer.EmailLexer;
 import emailvalidator4j.parser.exception.*;
+import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
+
+import java.util.Arrays;
+import java.util.List;
 
 @RunWith(DataProviderRunner.class)
 public class LocalPartTest {
@@ -162,6 +166,30 @@ public class LocalPartTest {
         exception.expect(ExpectedCTEXT.class);
 
         parser.parse("test\r\n \n@");
+    }
+
+    @Test
+    @UseDataProvider("localPartWithWarnings")
+    public void localPartHasWarnings(String localPart, List<Warnings> warnings) throws InvalidEmail {
+        LocalPart parser = this.getLocalPartParser();
+        parser.parse(localPart);
+        System.out.println(parser.getWarnings());
+
+        Assert.assertTrue("Expected warning " + warnings.toString(), parser.getWarnings().equals(warnings));
+    }
+
+    @DataProvider
+    public static Object[][] localPartWithWarnings() {
+        return new Object[][]{
+                {"example @", Arrays.asList(Warnings.DEPRECATED_CFWS_NEAR_AT)},
+                {"example(comment)@", Arrays.asList(Warnings.COMMENT, Warnings.DEPRECATED_CFWS_NEAR_AT)},
+                {"\"quoted\"@", Arrays.asList(Warnings.RFC5321_QUOTEDSTRING)},
+                {String.format("\"%s%s\"@", "\\", "\t"), Arrays.asList(Warnings.RFC5321_QUOTEDSTRING, Warnings.CFWS_FWS)},
+                {"too_long_localpart_too_long_localpart_too_long_localpart_too_long_localpart@",
+                        Arrays.asList(Warnings.RFC5321_LOCALPART_TOO_LONG)},
+
+//                {"example@ example.com", Arrays.asList(Warnings.DEPRECATED_CFWS_NEAR_AT)},
+        };
     }
 
     private LocalPart getLocalPartParser() {

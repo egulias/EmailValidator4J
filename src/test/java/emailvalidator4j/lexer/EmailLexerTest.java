@@ -235,4 +235,11 @@ public class EmailLexerTest {
         lexer.lex((char) 1 + "@bar.com");
         Assert.assertTrue(lexer.hasInvalidTokens());
     }
+
+    @Test
+    public void buildTextFromTokensUntilCurrentPosition() {
+        EmailLexer lexer = new EmailLexer();
+        lexer.lex("test(comment)@example.com");
+        Assert.assertTrue(lexer.lexedText(), "test".equals(lexer.lexedText()));
+    }
 }

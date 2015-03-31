@@ -13,6 +13,7 @@ import java.util.List;
 public class LocalPart extends Parser {
     private boolean closingQuote = false;
     private boolean parseDQuote = true;
+    private static int RFC5321_LOCALPART_MAX_LENGTH = 64;
 
     LocalPart (EmailLexer lexer) {
         super(lexer);
@@ -57,10 +58,14 @@ public class LocalPart extends Parser {
         if (this.lexer.getPrevious().equals(Tokens.DOT)) {
             throw new DotAtEnd("Dot at the end of localpart");
         }
-//        $prev = $this->lexer->getPrevious();
-//        if (strlen($prev['value']) > EmailValidator::RFC5322_LOCAL_TOOLONG) {
-//            $this->warnings[] = EmailValidator::RFC5322_LOCAL_TOOLONG;
-//        }
+
+        this.checkRFC5321Length();
+    }
+
+    private void checkRFC5321Length() {
+        if (this.lexer.lexedText().length() > RFC5321_LOCALPART_MAX_LENGTH) {
+            this.warnings.add(Warnings.RFC5321_LOCALPART_TOO_LONG);
+        }
     }
 
     private void checkForInvalidToken(boolean closingQuote) throws InvalidEmail {
