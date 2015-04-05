@@ -5,10 +5,14 @@ import com.tngtech.java.junit.dataprovider.DataProviderRunner;
 import com.tngtech.java.junit.dataprovider.UseDataProvider;
 import emailvalidator4j.lexer.EmailLexer;
 import emailvalidator4j.parser.exception.*;
+import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
+
+import java.util.Arrays;
+import java.util.List;
 
 @RunWith(DataProviderRunner.class)
 public class DomainPartTest {
@@ -63,9 +67,36 @@ public class DomainPartTest {
         };
     }
 
+    @Test
+    @UseDataProvider("domainPartWithWarnings")
+    public void domainPartWarnings(String domainPart, List<Warnings> warnings) throws InvalidEmail {
+        DomainPart parser = this.getDomainPartParser(domainPart);
+        parser.parse(domainPart);
+
+        Assert.assertTrue(parser.getWarnings().toString(), warnings.equals(parser.getWarnings()));
+    }
+
+    @DataProvider
+    public static Object[][] domainPartWithWarnings() {
+        return new Object[][]{
+                {"@ example.com", Arrays.asList(Warnings.DEPRECATED_CFWS_NEAR_AT)},
+                {"@example(comment).com", Arrays.asList(Warnings.COMMENT)},
+                {"@[127.0.0.1]", Arrays.asList(Warnings.RFC5321_ADDRESS_LITERAL)},
+                {"@[IPv6:2001:0db8:85a3:0000:0000:8a2e:0370:7334]", Arrays.asList(Warnings.RFC5321_ADDRESS_LITERAL)},
+                {"@[IPv6:2001:0db8:85a3:0000:0000:8a2e:0370::]",
+                        Arrays.asList(Warnings.RFC5321_ADDRESS_LITERAL, Warnings.RFC5321_IPV6_DEPRECATED)},
+                {"@[IPv6:2001:0db8:85a3:0000:0000:8a2e:0370:7334::]",
+                        Arrays.asList(Warnings.RFC5321_ADDRESS_LITERAL, Warnings.RFC5322_IPV6_MAX_GROUPS)},
+                {"@[IPv6:1::1::1]",
+                        Arrays.asList(Warnings.RFC5321_ADDRESS_LITERAL, Warnings.RFC5322_IPV6_DOUBLE_COLON)},
+                {"@[\n]",
+                        Arrays.asList(Warnings.RFC5321_ADDRESS_LITERAL, Warnings.RFC5322_DOMAIN_LITERAL_OBSOLETE_DTEXT)},
+        };
+    }
+
+    @DataProvider
     private DomainPart getDomainPartParser(String domainPart) {
         EmailLexer lexer = new EmailLexer();
-        lexer.lex(domainPart);
         return new DomainPart(lexer);
     }
 }

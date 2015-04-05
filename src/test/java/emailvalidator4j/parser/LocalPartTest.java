@@ -187,8 +187,6 @@ public class LocalPartTest {
                 {String.format("\"%s%s\"@", "\\", "\t"), Arrays.asList(Warnings.RFC5321_QUOTEDSTRING, Warnings.CFWS_FWS)},
                 {"too_long_localpart_too_long_localpart_too_long_localpart_too_long_localpart@",
                         Arrays.asList(Warnings.RFC5321_LOCALPART_TOO_LONG)},
-
-//                {"example@ example.com", Arrays.asList(Warnings.DEPRECATED_CFWS_NEAR_AT)},
         };
     }
 

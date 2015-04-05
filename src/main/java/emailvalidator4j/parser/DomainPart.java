@@ -4,6 +4,9 @@ import emailvalidator4j.lexer.EmailLexer;
 import emailvalidator4j.lexer.Tokens;
 import emailvalidator4j.parser.exception.*;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 public class DomainPart extends Parser {
 
     DomainPart (EmailLexer lexer) {
@@ -126,6 +129,76 @@ public class DomainPart extends Parser {
 //        }
     }
 
+    private void checkIPv6Tag(String literal) {
+        int maxGroups = 8;
+        int groupsCount = 0;
+
+        Pattern colon = Pattern.compile(":");
+        Pattern badChars = Pattern.compile("^[0-9A-Fa-f]{0,4}$");
+        Pattern doubleColon = Pattern.compile(".+::.+");
+        String IPv6Tag = literal.substring(0, 6);
+        String literalWithoutTag = literal.substring(6, literal.length());
+
+        Matcher colonMatcher = colon.matcher(literalWithoutTag);
+        while (colonMatcher.find()) {
+            groupsCount++;
+        }
+
+        Matcher doubleColonMatcher = doubleColon.matcher(literalWithoutTag);
+        if (doubleColonMatcher.find()) {
+            this.warnings.add(Warnings.RFC5322_IPV6_DOUBLE_COLON);
+            //TODO review this. This warning should be compatible with others? http://www.rfcreader.com/#rfc5321_line1934
+            return;
+        }
+
+        if (groupsCount > maxGroups) {
+            this.warnings.add(Warnings.RFC5322_IPV6_MAX_GROUPS);
+        } else if (groupsCount == maxGroups) {
+            this.warnings.add(Warnings.RFC5321_IPV6_DEPRECATED);
+        }
+
+
+//        $prev = $this->lexer->getPrevious();
+//        if ($prev['type'] === EmailLexer::S_COLON) {
+//            $this->warnings[] = EmailValidator::RFC5322_IPV6_COLONEND;
+//        }
+//
+//        $IPv6       = substr($addressLiteral, 5);
+//        //Daniel Marschall's new IPv6 testing strategy
+//        $matchesIP  = explode(':', $IPv6);
+//        $groupCount = count($matchesIP);
+//        $colons     = strpos($IPv6, '::');
+//
+//        if (count(preg_grep('/^[0-9A-Fa-f]{0,4}$/', $matchesIP, PREG_GREP_INVERT)) !== 0) {
+//            $this->warnings[] = EmailValidator::RFC5322_IPV6_BADCHAR;
+//        }
+//
+//        if ($colons === false) {
+//            // We need exactly the right number of groups
+//            if ($groupCount !== $maxGroups) {
+//                $this->warnings[] = EmailValidator::RFC5322_IPV6_GRPCOUNT;
+//            }
+//            return;
+//        }
+//
+//        if ($colons !== strrpos($IPv6, '::')) {
+//            $this->warnings[] = EmailValidator::RFC5322_IPV6_2X2XCOLON;
+//            return;
+//        }
+//
+//        if ($colons === 0 || $colons === (strlen($IPv6) - 2)) {
+//            // RFC 4291 allows :: at the start or end of an address
+//            //with 7 other groups in addition
+//            ++$maxGroups;
+//        }
+//
+//        if ($groupCount > $maxGroups) {
+//            $this->warnings[] = EmailValidator::RFC5322_IPV6_MAXGRPS;
+//        } elseif ($groupCount === $maxGroups) {
+//            $this->warnings[] = EmailValidator::RFC5321_IPV6DEPRECATED;
+//        }
+    }
+
     private void parseLiteralPart() throws InvalidEmail {
         boolean IPv6Tag = false;
         String addressLiteral = "";
@@ -148,10 +221,14 @@ public class DomainPart extends Parser {
                 IPv6Tag = true;
             }
 
-            addressLiteral += this.lexer.getCurrent().getText();
+//            addressLiteral += this.lexer.getCurrent().getText();
 
             this.lexer.next();
         } while(!this.lexer.isAtEnd() && !this.lexer.isNextToken(Tokens.CLOSEBRACKET));
+        this.warnings.add(Warnings.RFC5321_ADDRESS_LITERAL);
+        addressLiteral = this.lexer.lexedText().replace('[', '\0').replace(']', '\0');
+        //Remove the initial @
+        this.checkIPv6Tag(addressLiteral.substring(1, addressLiteral.length()));
 //        do {
 //
 //            if ($this->lexer->token['type'] === EmailLexer::INVALID ||
