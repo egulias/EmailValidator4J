@@ -81,6 +81,10 @@ public class DomainPartTest {
         return new Object[][]{
                 {"@ example.com", Arrays.asList(Warnings.DEPRECATED_CFWS_NEAR_AT)},
                 {"@example(comment).com", Arrays.asList(Warnings.COMMENT)},
+                {"@domaintoolongdomaintoolongdomaintoolongdomaintoolongdomaintoolongdomaintoolongdomaintoolongdomaintoolong" +
+                        "domaintoolongdomaintoolongdomaintoolongdomaintoolongdomaintoolongdomaintoolongdomaintoolong" +
+                        "domaintoolongdomaintoolongdomaintoolongdomaintoolongdomaintoolongdomaintoolongdomaintoolong",
+                        Arrays.asList(Warnings.RFC5322_DOMAIN_TOO_LONG)},
                 {"@[127.0.0.1]", Arrays.asList(Warnings.RFC5321_ADDRESS_LITERAL)},
                 {"@[IPv6:2001:0db8:85a3:0000:0000:8a2e:0370:7334]", Arrays.asList(Warnings.RFC5321_ADDRESS_LITERAL)},
                 {"@[IPv6:2001:0db8:85a3:0000:0000:8a2e:0370::]",
@@ -91,10 +95,15 @@ public class DomainPartTest {
                         Arrays.asList(Warnings.RFC5321_ADDRESS_LITERAL, Warnings.RFC5322_IPV6_DOUBLE_COLON)},
                 {"@[\n]",
                         Arrays.asList(Warnings.RFC5321_ADDRESS_LITERAL, Warnings.RFC5322_DOMAIN_LITERAL_OBSOLETE_DTEXT)},
+                {"@[IPv6::2001:0db8:85a3:0000:0000:8a2e:0370:7334]",
+                        Arrays.asList(Warnings.RFC5322_IPV6_START_WITH_COLON, Warnings.RFC5321_ADDRESS_LITERAL)},
+                {"@[IPv6:z001:0db8:85a3:0000:0000:8a2e:0370:7334]",
+                        Arrays.asList(Warnings.RFC5321_ADDRESS_LITERAL, Warnings.RFC5322_IPV6_BAD_CHAR)},
+                {"@[IPv6:2001:0db8:85a3:0000:0000:8a2e:0370:]",
+                        Arrays.asList(Warnings.RFC5321_ADDRESS_LITERAL, Warnings.RFC5322_IPV6_END_WITH_COLON)},
         };
     }
 
-    @DataProvider
     private DomainPart getDomainPartParser(String domainPart) {
         EmailLexer lexer = new EmailLexer();
         return new DomainPart(lexer);

@@ -12,6 +12,10 @@ public enum Warnings {
     RFC5322_IPV6_MAX_GROUPS("Max groups reached"),
     RFC5322_IPV6_DOUBLE_COLON("Double :: in address literal"),
     RFC5322_DOMAIN_LITERAL_OBSOLETE_DTEXT("Obsolete DTEXT in domain literal"),
+    RFC5322_IPV6_START_WITH_COLON("Additional colon after IPv6 tag"),
+    RFC5322_IPV6_END_WITH_COLON("Colon found at the end"),
+    RFC5322_IPV6_BAD_CHAR("Literal contains an invlaid char"),
+    RFC5322_DOMAIN_TOO_LONG("Domain exceeds 255 maximum length"),
     DEPRECATED_COMMENT("Deprecated place for a comment");
 
     private String message;

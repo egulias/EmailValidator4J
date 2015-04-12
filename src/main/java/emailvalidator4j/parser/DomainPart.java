@@ -9,6 +9,8 @@ import java.util.regex.Pattern;
 
 public class DomainPart extends Parser {
 
+    public static final int DOMAINPART_MAX_LENGTH = 255;
+
     DomainPart (EmailLexer lexer) {
         super(lexer);
     }
@@ -26,7 +28,7 @@ public class DomainPart extends Parser {
             throw new DomainHyphen("Found -  in domain part");
         }
 
-        String parsedDomain = this.doParseDomainPart();
+        this.doParseDomainPart();
 
         if (this.lexer.getPrevious().equals(Tokens.DOT)) {
             throw new DotAtEnd("");
@@ -35,10 +37,13 @@ public class DomainPart extends Parser {
         if (this.lexer.getPrevious().equals(Tokens.SP)) {
             throw new CRLFAtEnd("");
         }
+
+        if (this.lexer.lexedText().length() > DOMAINPART_MAX_LENGTH) {
+            this.warnings.add(Warnings.RFC5322_DOMAIN_TOO_LONG);
+        }
     }
 
-    private String doParseDomainPart() throws InvalidEmail {
-        String domain = "";
+    private void doParseDomainPart() throws InvalidEmail {
         do {
             if (this.lexer.getCurrent().equals(Tokens.SEMICOLON)) {
                 throw new ExpectedATEXT("Expected ATEXT");
@@ -63,7 +68,6 @@ public class DomainPart extends Parser {
             this.checkExceptions();
 
             if (this.lexer.getCurrent().equals(Tokens.OPENBRACKET)) {
-                this.checkIPv6Warnings();
                 this.parseLiteralPart();
             }
 
@@ -73,12 +77,8 @@ public class DomainPart extends Parser {
                 this.parseFWS();
             }
 
-//            $domain .= $this->lexer->token['value'];
             this.lexer.next();
         } while (!this.lexer.isAtEnd());
-
-        return domain;
-
     }
 
     private void checkLabelLength() {
@@ -115,26 +115,12 @@ public class DomainPart extends Parser {
         }
     }
 
-    private void checkIPv6Warnings() {
-
-//        if ($this->lexer->isNextToken(EmailLexer::S_COLON)) {
-//            $this->warnings[] = EmailValidator::RFC5322_IPV6_COLONSTRT;
-//        }
-//        if ($this->lexer->isNextToken(EmailLexer::S_IPV6TAG)) {
-//            $lexer = clone $this->lexer;
-//            $lexer->moveNext();
-//            if ($lexer->isNextToken(EmailLexer::S_DOUBLECOLON)) {
-//                $this->warnings[] = EmailValidator::RFC5322_IPV6_COLONSTRT;
-//            }
-//        }
-    }
-
     private void checkIPv6Tag(String literal) {
         int maxGroups = 8;
         int groupsCount = 0;
 
         Pattern colon = Pattern.compile(":");
-        Pattern badChars = Pattern.compile("^[0-9A-Fa-f]{0,4}$");
+        Pattern badChars = Pattern.compile("[^0-9A-Fa-f:]");
         Pattern doubleColon = Pattern.compile(".+::.+");
         String IPv6Tag = literal.substring(0, 6);
         String literalWithoutTag = literal.substring(6, literal.length());
@@ -142,6 +128,19 @@ public class DomainPart extends Parser {
         Matcher colonMatcher = colon.matcher(literalWithoutTag);
         while (colonMatcher.find()) {
             groupsCount++;
+        }
+
+        if (this.getWarnings().contains(Warnings.RFC5322_IPV6_START_WITH_COLON)) {
+            groupsCount = groupsCount - 1;
+        }
+
+        Matcher badCharMatcher = badChars.matcher(literalWithoutTag);
+        if (badCharMatcher.find()) {
+            this.warnings.add(Warnings.RFC5322_IPV6_BAD_CHAR);
+        }
+
+        if (this.lexer.getCurrent().equals(Tokens.COLON)) {
+            this.warnings.add(Warnings.RFC5322_IPV6_END_WITH_COLON);
         }
 
         Matcher doubleColonMatcher = doubleColon.matcher(literalWithoutTag);
@@ -158,10 +157,6 @@ public class DomainPart extends Parser {
         }
 
 
-//        $prev = $this->lexer->getPrevious();
-//        if ($prev['type'] === EmailLexer::S_COLON) {
-//            $this->warnings[] = EmailValidator::RFC5322_IPV6_COLONEND;
-//        }
 //
 //        $IPv6       = substr($addressLiteral, 5);
 //        //Daniel Marschall's new IPv6 testing strategy
@@ -169,9 +164,6 @@ public class DomainPart extends Parser {
 //        $groupCount = count($matchesIP);
 //        $colons     = strpos($IPv6, '::');
 //
-//        if (count(preg_grep('/^[0-9A-Fa-f]{0,4}$/', $matchesIP, PREG_GREP_INVERT)) !== 0) {
-//            $this->warnings[] = EmailValidator::RFC5322_IPV6_BADCHAR;
-//        }
 //
 //        if ($colons === false) {
 //            // We need exactly the right number of groups
@@ -181,22 +173,12 @@ public class DomainPart extends Parser {
 //            return;
 //        }
 //
-//        if ($colons !== strrpos($IPv6, '::')) {
-//            $this->warnings[] = EmailValidator::RFC5322_IPV6_2X2XCOLON;
-//            return;
-//        }
-//
 //        if ($colons === 0 || $colons === (strlen($IPv6) - 2)) {
 //            // RFC 4291 allows :: at the start or end of an address
 //            //with 7 other groups in addition
 //            ++$maxGroups;
 //        }
 //
-//        if ($groupCount > $maxGroups) {
-//            $this->warnings[] = EmailValidator::RFC5322_IPV6_MAXGRPS;
-//        } elseif ($groupCount === $maxGroups) {
-//            $this->warnings[] = EmailValidator::RFC5321_IPV6DEPRECATED;
-//        }
     }
 
     private void parseLiteralPart() throws InvalidEmail {
@@ -219,16 +201,19 @@ public class DomainPart extends Parser {
 
             if (this.lexer.getCurrent().equals(Tokens.IPV6TAG)) {
                 IPv6Tag = true;
+                if (this.lexer.isNextToken(Tokens.DOUBLECOLON)) {
+                    this.warnings.add(Warnings.RFC5322_IPV6_START_WITH_COLON);
+                }
             }
-
-//            addressLiteral += this.lexer.getCurrent().getText();
 
             this.lexer.next();
         } while(!this.lexer.isAtEnd() && !this.lexer.isNextToken(Tokens.CLOSEBRACKET));
         this.warnings.add(Warnings.RFC5321_ADDRESS_LITERAL);
         addressLiteral = this.lexer.lexedText().replace('[', '\0').replace(']', '\0');
         //Remove the initial @
-        this.checkIPv6Tag(addressLiteral.substring(1, addressLiteral.length()));
+        if (IPv6Tag) {
+            this.checkIPv6Tag(addressLiteral.substring(1, addressLiteral.length()));
+        }
 //        do {
 //
 //            if ($this->lexer->token['type'] === EmailLexer::INVALID ||
