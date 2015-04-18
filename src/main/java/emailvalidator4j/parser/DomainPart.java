@@ -1,6 +1,7 @@
 package emailvalidator4j.parser;
 
 import emailvalidator4j.lexer.EmailLexer;
+import emailvalidator4j.lexer.Token;
 import emailvalidator4j.lexer.Tokens;
 import emailvalidator4j.parser.exception.*;
 
@@ -133,6 +134,19 @@ public class DomainPart extends Parser {
         if (this.getWarnings().contains(Warnings.RFC5322_IPV6_START_WITH_COLON)) {
             groupsCount = groupsCount - 1;
         }
+//        if ($colons === false) {
+//            // We need exactly the right number of groups
+//            if ($groupCount !== $maxGroups) {
+//                $this->warnings[] = EmailValidator::RFC5322_IPV6_GRPCOUNT;
+//            }
+//            return;
+//        }
+//
+//        if ($colons === 0 || $colons === (strlen($IPv6) - 2)) {
+//            // RFC 4291 allows :: at the start or end of an address
+//            //with 7 other groups in addition
+//            ++$maxGroups;
+//        }
 
         Matcher badCharMatcher = badChars.matcher(literalWithoutTag);
         if (badCharMatcher.find()) {
@@ -154,6 +168,8 @@ public class DomainPart extends Parser {
             this.warnings.add(Warnings.RFC5322_IPV6_MAX_GROUPS);
         } else if (groupsCount == maxGroups) {
             this.warnings.add(Warnings.RFC5321_IPV6_DEPRECATED);
+        } else if (groupsCount < maxGroups) {
+            this.warnings.add(Warnings.RFC5322_IPV6_GROUP_COUNT);
         }
 
 
@@ -183,20 +199,20 @@ public class DomainPart extends Parser {
 
     private void parseLiteralPart() throws InvalidEmail {
         boolean IPv6Tag = false;
-        String addressLiteral = "";
+        String addressLiteral;
         do {
             if (this.lexer.isNextToken(Tokens.OPENBRACKET)) {
                 throw new ExpectedDTEXT("OPENBRACKET");
             }
+            this.lexer.next();
 
-            if (this.isFWS()) {
-//                $this->warnings[] = EmailValidator::CFWS_FWS;
-                this.parseFWS();
+            if (this.isObsoleteDTEXT()) {
+                this.warnings.add(Warnings.RFC5322_DOMAIN_LITERAL_OBSOLETE_DTEXT);
             }
 
-            if (this.lexer.getCurrent().equals(Tokens.BACKSLASH)) {
-//                $this->warnings[] = EmailValidator::RFC5322_DOMLIT_OBSDTEXT;
-//                $this->validateQuotedPair();
+            if (this.isFWS() && !this.lexer.getCurrent().equals(Tokens.LF)) {
+//                $this->warnings[] = EmailValidator::CFWS_FWS;
+                this.parseFWS();
             }
 
             if (this.lexer.getCurrent().equals(Tokens.IPV6TAG)) {
@@ -206,42 +222,19 @@ public class DomainPart extends Parser {
                 }
             }
 
-            this.lexer.next();
         } while(!this.lexer.isAtEnd() && !this.lexer.isNextToken(Tokens.CLOSEBRACKET));
         this.warnings.add(Warnings.RFC5321_ADDRESS_LITERAL);
         addressLiteral = this.lexer.lexedText().replace('[', '\0').replace(']', '\0');
         //Remove the initial @
         if (IPv6Tag) {
             this.checkIPv6Tag(addressLiteral.substring(1, addressLiteral.length()));
+        } else {
+            this.warnings.add(Warnings.RFC5322_DOMAIN_LITERAL);
         }
-//        do {
-//
-//            if ($this->lexer->token['type'] === EmailLexer::INVALID ||
-//                    $this->lexer->token['type'] === EmailLexer::C_DEL   ||
-//                            $this->lexer->token['type'] === EmailLexer::S_LF
-//                    ) {
-//                $this->warnings[] = EmailValidator::RFC5322_DOMLIT_OBSDTEXT;
-//            }
-//
-//        } while ($this->lexer->moveNext());
-//
-//        $addressLiteral = str_replace('[', '', $addressLiteral);
-//        $addressLiteral = $this->checkIPV4Tag($addressLiteral);
-//
-//        if (false === $addressLiteral) {
-//            return $addressLiteral;
-//        }
-//
-//        if (!$IPv6TAG) {
-//            $this->warnings[] = EmailValidator::RFC5322_DOMAINLITERAL;
-//            return $addressLiteral;
-//        }
-//
-//        $this->warnings[] = EmailValidator::RFC5321_ADDRESSLITERAL;
-//
-//        $this->checkIPV6Tag($addressLiteral);
-//
-//        return $addressLiteral;
+        this.lexer.next();
     }
 
+    private boolean isObsoleteDTEXT() {
+        return this.lexer.getCurrent().equals(new Token(Tokens.INVALID, "")) || this.lexer.getCurrent().equals(Tokens.LF);
+    }
 }

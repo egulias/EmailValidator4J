@@ -23,7 +23,7 @@ public class DomainPartTest {
     @Test
     @UseDataProvider("invalidDomainParts")
     public void invalidPartThrowsException(Class type, String domainPart) throws InvalidEmail {
-        DomainPart parser = this.getDomainPartParser(domainPart);
+        DomainPart parser = this.getDomainPartParser();
         exception.expect(type);
         parser.parse(domainPart);
     }
@@ -54,7 +54,7 @@ public class DomainPartTest {
     @Test
     @UseDataProvider("invalidDomainLiteralParts")
     public void invalidDomainLiteralExceptions(Class type, String literalPart) throws InvalidEmail {
-        DomainPart parser = this.getDomainPartParser(literalPart);
+        DomainPart parser = this.getDomainPartParser();
         exception.expect(type);
         parser.parse(literalPart);
     }
@@ -69,11 +69,12 @@ public class DomainPartTest {
 
     @Test
     @UseDataProvider("domainPartWithWarnings")
-    public void domainPartWarnings(String domainPart, List<Warnings> warnings) throws InvalidEmail {
-        DomainPart parser = this.getDomainPartParser(domainPart);
+    public void domainPartHasWarnings(String domainPart, List<Warnings> warnings) throws InvalidEmail {
+        DomainPart parser = this.getDomainPartParser();
+        System.out.println(domainPart);
         parser.parse(domainPart);
 
-        Assert.assertTrue(parser.getWarnings().toString(), warnings.equals(parser.getWarnings()));
+        Assert.assertTrue(parser.getWarnings().toString().concat("and ->").concat(warnings.toString()), warnings.equals(parser.getWarnings()));
     }
 
     @DataProvider
@@ -85,7 +86,7 @@ public class DomainPartTest {
                         "domaintoolongdomaintoolongdomaintoolongdomaintoolongdomaintoolongdomaintoolongdomaintoolong" +
                         "domaintoolongdomaintoolongdomaintoolongdomaintoolongdomaintoolongdomaintoolongdomaintoolong",
                         Arrays.asList(Warnings.RFC5322_DOMAIN_TOO_LONG)},
-                {"@[127.0.0.1]", Arrays.asList(Warnings.RFC5321_ADDRESS_LITERAL)},
+                {"@[127.0.0.1]", Arrays.asList(Warnings.RFC5321_ADDRESS_LITERAL, Warnings.RFC5322_DOMAIN_LITERAL)},
                 {"@[IPv6:2001:0db8:85a3:0000:0000:8a2e:0370:7334]", Arrays.asList(Warnings.RFC5321_ADDRESS_LITERAL)},
                 {"@[IPv6:2001:0db8:85a3:0000:0000:8a2e:0370::]",
                         Arrays.asList(Warnings.RFC5321_ADDRESS_LITERAL, Warnings.RFC5321_IPV6_DEPRECATED)},
@@ -94,17 +95,20 @@ public class DomainPartTest {
                 {"@[IPv6:1::1::1]",
                         Arrays.asList(Warnings.RFC5321_ADDRESS_LITERAL, Warnings.RFC5322_IPV6_DOUBLE_COLON)},
                 {"@[\n]",
-                        Arrays.asList(Warnings.RFC5321_ADDRESS_LITERAL, Warnings.RFC5322_DOMAIN_LITERAL_OBSOLETE_DTEXT)},
+                        Arrays.asList(Warnings.RFC5322_DOMAIN_LITERAL_OBSOLETE_DTEXT, Warnings.RFC5321_ADDRESS_LITERAL,
+                                Warnings.RFC5322_DOMAIN_LITERAL)},
                 {"@[IPv6::2001:0db8:85a3:0000:0000:8a2e:0370:7334]",
                         Arrays.asList(Warnings.RFC5322_IPV6_START_WITH_COLON, Warnings.RFC5321_ADDRESS_LITERAL)},
                 {"@[IPv6:z001:0db8:85a3:0000:0000:8a2e:0370:7334]",
                         Arrays.asList(Warnings.RFC5321_ADDRESS_LITERAL, Warnings.RFC5322_IPV6_BAD_CHAR)},
                 {"@[IPv6:2001:0db8:85a3:0000:0000:8a2e:0370:]",
                         Arrays.asList(Warnings.RFC5321_ADDRESS_LITERAL, Warnings.RFC5322_IPV6_END_WITH_COLON)},
+                {"@[IPv6:1111:2222:3333:4444:5555:6666:7777]",
+                        Arrays.asList(Warnings.RFC5321_ADDRESS_LITERAL, Warnings.RFC5322_IPV6_GROUP_COUNT)},
         };
     }
 
-    private DomainPart getDomainPartParser(String domainPart) {
+    private DomainPart getDomainPartParser() {
         EmailLexer lexer = new EmailLexer();
         return new DomainPart(lexer);
     }

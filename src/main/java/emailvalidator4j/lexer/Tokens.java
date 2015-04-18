@@ -38,7 +38,7 @@ public enum Tokens implements TokenInterface {
     private final String name;
     private final String text;
 
-    private Tokens(String name, String text) {
+    Tokens(String name, String text) {
         this.name = name;
         this.text = text;
     }

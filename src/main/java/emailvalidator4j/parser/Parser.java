@@ -24,11 +24,7 @@ public abstract class Parser {
     }
 
     protected void validateQuotedPair() {
-//        if (!(this.lexer.getCurrent().equals(Tokens.D) === EmailLexer::INVALID
-//                || $this->lexer->token['type'] === EmailLexer::C_DEL)) {
-//            throw new \InvalidArgumentException('ERR_EXPECTING_QPAIR');
-//        }
-
+        //only applies for emails like "\"@domain.com or "test\"@domain.com
         this.warnings.add(Warnings.DEPRECATED_QP);
     }
 
@@ -131,7 +127,7 @@ public abstract class Parser {
                 throw new ConsecutiveCRLF("Consecutive CRLF");
             }
         }
-        if (!this.lexer.isNextToken(new ArrayList<TokenInterface>(Arrays.asList(Tokens.SP, Tokens.HTAB)))) {
+        if (!this.lexer.isNextToken(new ArrayList<>(Arrays.asList(Tokens.SP, Tokens.HTAB)))) {
             throw new CRLFAtEnd("CRLF at the end");
         }
     }
