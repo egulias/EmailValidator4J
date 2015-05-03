@@ -120,11 +120,12 @@ public class DomainPart extends Parser {
         int maxGroups = 8;
         int groupsCount = 0;
 
-        Pattern colon = Pattern.compile(":");
+        Pattern colon = Pattern.compile(":[0-9A-Fa-f]{4}");
         Pattern badChars = Pattern.compile("[^0-9A-Fa-f:]");
         Pattern doubleColon = Pattern.compile(".+::.+");
+        Pattern startOrEndWithDoubleColon = Pattern.compile("(^::)|(.*::$)");
         String IPv6Tag = literal.substring(0, 6);
-        String literalWithoutTag = literal.substring(6, literal.length());
+        String literalWithoutTag = literal.substring(5, literal.length());
 
         Matcher colonMatcher = colon.matcher(literalWithoutTag);
         while (colonMatcher.find()) {
@@ -132,29 +133,19 @@ public class DomainPart extends Parser {
         }
 
         if (this.getWarnings().contains(Warnings.RFC5322_IPV6_START_WITH_COLON)) {
-            groupsCount = groupsCount - 1;
+//            groupsCount = groupsCount - 1;
+            return;
         }
-//        if ($colons === false) {
-//            // We need exactly the right number of groups
-//            if ($groupCount !== $maxGroups) {
-//                $this->warnings[] = EmailValidator::RFC5322_IPV6_GRPCOUNT;
-//            }
-//            return;
-//        }
-//
-//        if ($colons === 0 || $colons === (strlen($IPv6) - 2)) {
-//            // RFC 4291 allows :: at the start or end of an address
-//            //with 7 other groups in addition
-//            ++$maxGroups;
-//        }
 
         Matcher badCharMatcher = badChars.matcher(literalWithoutTag);
         if (badCharMatcher.find()) {
             this.warnings.add(Warnings.RFC5322_IPV6_BAD_CHAR);
+            groupsCount++;
         }
 
         if (this.lexer.getCurrent().equals(Tokens.COLON)) {
             this.warnings.add(Warnings.RFC5322_IPV6_END_WITH_COLON);
+            return;
         }
 
         Matcher doubleColonMatcher = doubleColon.matcher(literalWithoutTag);
@@ -164,37 +155,22 @@ public class DomainPart extends Parser {
             return;
         }
 
-        if (groupsCount > maxGroups) {
-            this.warnings.add(Warnings.RFC5322_IPV6_MAX_GROUPS);
-        } else if (groupsCount == maxGroups) {
-            this.warnings.add(Warnings.RFC5321_IPV6_DEPRECATED);
-        } else if (groupsCount < maxGroups) {
+        Matcher startOrEndWithDoubleColonMatcher = startOrEndWithDoubleColon.matcher(literalWithoutTag);
+        boolean startsOrEndsWithDoubleColon = startOrEndWithDoubleColonMatcher.find();
+
+        if (startsOrEndsWithDoubleColon) {
+            groupsCount ++;
+        }
+
+        if (groupsCount != maxGroups) {
             this.warnings.add(Warnings.RFC5322_IPV6_GROUP_COUNT);
         }
 
-
-//
-//        $IPv6       = substr($addressLiteral, 5);
-//        //Daniel Marschall's new IPv6 testing strategy
-//        $matchesIP  = explode(':', $IPv6);
-//        $groupCount = count($matchesIP);
-//        $colons     = strpos($IPv6, '::');
-//
-//
-//        if ($colons === false) {
-//            // We need exactly the right number of groups
-//            if ($groupCount !== $maxGroups) {
-//                $this->warnings[] = EmailValidator::RFC5322_IPV6_GRPCOUNT;
-//            }
-//            return;
-//        }
-//
-//        if ($colons === 0 || $colons === (strlen($IPv6) - 2)) {
-//            // RFC 4291 allows :: at the start or end of an address
-//            //with 7 other groups in addition
-//            ++$maxGroups;
-//        }
-//
+        if (groupsCount > maxGroups) {
+            this.warnings.add(Warnings.RFC5322_IPV6_MAX_GROUPS);
+        } else if (groupsCount == maxGroups && startsOrEndsWithDoubleColon) {
+            this.warnings.add(Warnings.RFC5321_IPV6_DEPRECATED);
+        }
     }
 
     private void parseLiteralPart() throws InvalidEmail {

@@ -74,7 +74,7 @@ public class DomainPartTest {
         System.out.println(domainPart);
         parser.parse(domainPart);
 
-        Assert.assertTrue(parser.getWarnings().toString().concat("and ->").concat(warnings.toString()), warnings.equals(parser.getWarnings()));
+        Assert.assertTrue(parser.getWarnings().toString().concat(" expected ->").concat(warnings.toString()), warnings.equals(parser.getWarnings()));
     }
 
     @DataProvider
@@ -91,7 +91,8 @@ public class DomainPartTest {
                 {"@[IPv6:2001:0db8:85a3:0000:0000:8a2e:0370::]",
                         Arrays.asList(Warnings.RFC5321_ADDRESS_LITERAL, Warnings.RFC5321_IPV6_DEPRECATED)},
                 {"@[IPv6:2001:0db8:85a3:0000:0000:8a2e:0370:7334::]",
-                        Arrays.asList(Warnings.RFC5321_ADDRESS_LITERAL, Warnings.RFC5322_IPV6_MAX_GROUPS)},
+                        Arrays.asList(Warnings.RFC5321_ADDRESS_LITERAL,  Warnings.RFC5322_IPV6_GROUP_COUNT,
+                                Warnings.RFC5322_IPV6_MAX_GROUPS)},
                 {"@[IPv6:1::1::1]",
                         Arrays.asList(Warnings.RFC5321_ADDRESS_LITERAL, Warnings.RFC5322_IPV6_DOUBLE_COLON)},
                 {"@[\n]",
