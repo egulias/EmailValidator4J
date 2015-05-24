@@ -8,6 +8,7 @@ import emailvalidator4j.parser.exception.InvalidEmail;
 import emailvalidator4j.parser.exception.NoLocalPart;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class Email {
     private final EmailLexer lexer;
@@ -33,5 +34,11 @@ public class Email {
 
         this.localPartParser.parse(email);
         this.domainPartParser.parse(this.lexer.toString());
+    }
+
+    public List getWarnings() {
+        List warnings = this.localPartParser.getWarnings();
+        warnings.addAll(this.domainPartParser.getWarnings());
+        return warnings;
     }
 }

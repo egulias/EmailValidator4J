@@ -93,4 +93,25 @@ public class EmailValidatorTest {
         EmailValidator validator = new EmailValidator();
         Assert.assertTrue(validEmail + " is a valid email", validator.isValid(validEmail));
     }
+
+    @Test
+    public void validEmailHasNoWarnings() {
+        EmailValidator validator = new EmailValidator();
+        validator.isValid("test@example.com");
+        Assert.assertFalse(validator.hasWarnings());
+    }
+
+    @Test
+    public void validEmailHasWarnings() {
+        EmailValidator validator = new EmailValidator();
+        validator.isValid("test@[127.0.0.0]");
+        Assert.assertTrue(validator.hasWarnings());
+    }
+
+    @Test
+    public void warningsAreExposed() {
+        EmailValidator validator = new EmailValidator();
+        validator.isValid("test@[127.0.0.0]");
+        Assert.assertFalse(validator.getWarnings().isEmpty());
+    }
 }
