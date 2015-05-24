@@ -37,7 +37,7 @@ public class Email {
     }
 
     public List getWarnings() {
-        List warnings = this.localPartParser.getWarnings();
+        List<Warnings> warnings = this.localPartParser.getWarnings();
         warnings.addAll(this.domainPartParser.getWarnings());
         return warnings;
     }
