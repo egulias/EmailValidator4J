@@ -11,7 +11,7 @@ public class TokensTest {
     }
 
     @Test
-    public void tokenIsRetrieved() {
+    public void tokensAreEqual() {
         Token token = new Token("AT", "@");
         Assert.assertTrue(token.equals(Tokens.get("@")));
     }

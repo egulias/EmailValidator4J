@@ -10,8 +10,14 @@ public class Token implements TokenInterface {
         this.text = text;
     }
 
-    public boolean equals(TokenInterface that) {
-        return this.name.equals(that.getName());
+    @Override
+    public boolean equals(Object o) {
+
+        if (this == o) return true;
+        if (o == null || !TokenInterface.class.isInstance(o)) return false;
+        TokenInterface token = (TokenInterface) o;
+
+        return this.name.equals(token.getName());
     }
 
     public String getName () {
