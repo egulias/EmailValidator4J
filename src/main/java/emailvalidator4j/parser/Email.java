@@ -41,4 +41,8 @@ public class Email {
         warnings.addAll(this.domainPartParser.getWarnings());
         return warnings;
     }
+
+    public String getDomainPart() {
+        return this.domainPartParser.getParsed().replace("@", "");
+    }
 }

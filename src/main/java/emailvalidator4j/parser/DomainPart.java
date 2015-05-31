@@ -213,4 +213,8 @@ public class DomainPart extends Parser {
     private boolean isObsoleteDTEXT() {
         return this.lexer.getCurrent().equals(new Token(Tokens.INVALID, "")) || this.lexer.getCurrent().equals(Tokens.LF);
     }
+
+    public String getParsed() {
+        return this.lexer.lexedText();
+    }
 }

@@ -109,6 +109,14 @@ public class DomainPartTest {
         };
     }
 
+    @Test
+    public void lexedDomainIsExposed() throws InvalidEmail {
+        DomainPart parser = this.getDomainPartParser();
+        parser.parse("@email.com");
+
+        Assert.assertTrue("got " + parser.getParsed(), parser.getParsed().equals("@email.com"));
+    }
+
     private DomainPart getDomainPartParser() {
         EmailLexer lexer = new EmailLexer();
         return new DomainPart(lexer);

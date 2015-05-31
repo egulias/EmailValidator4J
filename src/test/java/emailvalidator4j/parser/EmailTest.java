@@ -4,6 +4,7 @@ import emailvalidator4j.lexer.EmailLexer;
 import emailvalidator4j.lexer.Tokens;
 import emailvalidator4j.parser.exception.InvalidEmail;
 import emailvalidator4j.parser.exception.NoLocalPart;
+import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -40,5 +41,14 @@ public class EmailTest {
 
         exception.expect(InvalidEmail.class);
         parser.parse("inva@lid@email.com");
+    }
+
+    @Test
+    public void canRetrieveDomainPart() throws InvalidEmail {
+        EmailLexer lexer = new EmailLexer();
+        Email parser = new Email(lexer);
+        parser.parse("valid@email.com");
+
+        Assert.assertTrue("got " + parser.getDomainPart(), parser.getDomainPart().equals("email.com"));
     }
 }
