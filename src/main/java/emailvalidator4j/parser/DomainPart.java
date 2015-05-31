@@ -10,7 +10,8 @@ import java.util.regex.Pattern;
 
 public class DomainPart extends Parser {
 
-    public static final int DOMAINPART_MAX_LENGTH = 255;
+    private static final int DOMAINPART_MAX_LENGTH = 255;
+    private static final int LABEL_MAX_LENGTH = 63;
 
     DomainPart (EmailLexer lexer) {
         super(lexer);
@@ -40,7 +41,7 @@ public class DomainPart extends Parser {
         }
 
         if (this.lexer.lexedText().length() > DOMAINPART_MAX_LENGTH) {
-            this.warnings.add(Warnings.RFC5322_DOMAIN_TOO_LONG);
+            this.warnings.add(Warnings.RFC5321_DOMAIN_TOO_LONG);
         }
     }
 
@@ -83,12 +84,12 @@ public class DomainPart extends Parser {
     }
 
     private void checkLabelLength() {
-//        if ($this->lexer->token['type'] === EmailLexer::S_DOT &&
-//                $prev['type'] === EmailLexer::GENERIC &&
-//                strlen($prev['value']) > 63
-//                ) {
-//            $this->warnings[] = EmailValidator::RFC5322_LABEL_TOOLONG;
-//        }
+        if (this.lexer.getCurrent().equals(Tokens.DOT) &&
+                this.lexer.getPrevious().equals(Tokens.get(Tokens.GENERIC)) &&
+                this.lexer.getPrevious().getText().length() > LABEL_MAX_LENGTH
+                ) {
+            this.warnings.add(Warnings.RFC1035_LABEL_TOO_LONG);
+        }
     }
 
 
@@ -187,7 +188,6 @@ public class DomainPart extends Parser {
             }
 
             if (this.isFWS() && !this.lexer.getCurrent().equals(Tokens.LF)) {
-//                $this->warnings[] = EmailValidator::CFWS_FWS;
                 this.parseFWS();
             }
 

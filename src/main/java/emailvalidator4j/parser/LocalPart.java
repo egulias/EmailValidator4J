@@ -40,8 +40,6 @@ public class LocalPart extends Parser {
             this.checkConsecutiveDots();
             this.checkForInvalidToken(closingQuote);
 
-//            $this->warnEscaping();
-
             if (this.isFWS()) {
                 this.parseFWS();
             }

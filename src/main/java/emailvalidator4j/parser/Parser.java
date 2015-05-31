@@ -37,7 +37,6 @@ public abstract class Parser {
         this.warnings.add(Warnings.COMMENT);
 
         while (!this.lexer.getCurrent().equals(Tokens.CLOSEPARENTHESIS)) {
-//            this.warnEscaping();
             this.lexer.next();
         }
 
@@ -73,7 +72,7 @@ public abstract class Parser {
         }
 
         if (this.lexer.isNextToken(Tokens.get("GENERIC")) && this.lexer.getPrevious().equals(Tokens.get("GENERIC"))) {
-//            throw new \InvalidArgumentException('ERR_EXPECTING_ATEXT');
+            throw new ExpectedATEXT("Generic between DQUOTE");
         }
 
         this.warnings.add(Warnings.RFC5321_QUOTEDSTRING);

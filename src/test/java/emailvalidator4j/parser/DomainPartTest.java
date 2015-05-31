@@ -71,7 +71,6 @@ public class DomainPartTest {
     @UseDataProvider("domainPartWithWarnings")
     public void domainPartHasWarnings(String domainPart, List<Warnings> warnings) throws InvalidEmail {
         DomainPart parser = this.getDomainPartParser();
-        System.out.println(domainPart);
         parser.parse(domainPart);
 
         Assert.assertTrue(parser.getWarnings().toString().concat(" expected ->").concat(warnings.toString()), warnings.equals(parser.getWarnings()));
@@ -84,8 +83,9 @@ public class DomainPartTest {
                 {"@example(comment).com", Arrays.asList(Warnings.COMMENT)},
                 {"@domaintoolongdomaintoolongdomaintoolongdomaintoolongdomaintoolongdomaintoolongdomaintoolongdomaintoolong" +
                         "domaintoolongdomaintoolongdomaintoolongdomaintoolongdomaintoolongdomaintoolongdomaintoolong" +
-                        "domaintoolongdomaintoolongdomaintoolongdomaintoolongdomaintoolongdomaintoolongdomaintoolong",
-                        Arrays.asList(Warnings.RFC5322_DOMAIN_TOO_LONG)},
+                        "domaintoolongdomaintoolongdomaintoolongdomaintoolongdomaintoolongdomaintoolongdomaintoolong" +
+                        ".com",
+                        Arrays.asList(Warnings.RFC1035_LABEL_TOO_LONG, Warnings.RFC5321_DOMAIN_TOO_LONG)},
                 {"@[127.0.0.1]", Arrays.asList(Warnings.RFC5321_ADDRESS_LITERAL, Warnings.RFC5322_DOMAIN_LITERAL)},
                 {"@[IPv6:2001:0db8:85a3:0000:0000:8a2e:0370:7334]", Arrays.asList(Warnings.RFC5321_ADDRESS_LITERAL)},
                 {"@[IPv6:2001:0db8:85a3:0000:0000:8a2e:0370::]",

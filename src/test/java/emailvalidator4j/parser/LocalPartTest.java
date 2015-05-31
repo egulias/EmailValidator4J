@@ -173,7 +173,6 @@ public class LocalPartTest {
     public void localPartHasWarnings(String localPart, List<Warnings> warnings) throws InvalidEmail {
         LocalPart parser = this.getLocalPartParser();
         parser.parse(localPart);
-        System.out.println(parser.getWarnings());
 
         Assert.assertTrue("Expected warning " + warnings.toString(), parser.getWarnings().equals(warnings));
     }
