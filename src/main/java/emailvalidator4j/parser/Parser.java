@@ -72,7 +72,7 @@ public abstract class Parser {
         }
 
         if (this.lexer.isNextToken(Tokens.get("GENERIC")) && this.lexer.getPrevious().equals(Tokens.get("GENERIC"))) {
-            throw new ExpectedATEXT("Generic between DQUOTE");
+            //TODO review this condition.
         }
 
         this.warnings.add(Warnings.RFC5321_QUOTEDSTRING);

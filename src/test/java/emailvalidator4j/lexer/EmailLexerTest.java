@@ -181,7 +181,8 @@ public class EmailLexerTest {
     @DataProvider
     public static Object[][] invalidUTF8StringsProvider() throws Exception {
         ArrayList<ArrayList<String>> invalidStrings = new ArrayList<>();
-        Pattern pattern1 = Pattern.compile("(?=\\p{Cc})(?=[^\\t\\n\\n\\r])", Pattern.UNICODE_CASE | Pattern.CASE_INSENSITIVE);
+        Pattern pattern1 = Pattern.compile("(?=\\p{Cc})(?=[^\\t\\n\\n\\r])",
+                Pattern.UNICODE_CASE | Pattern.CASE_INSENSITIVE);
         Pattern pattern2 = Pattern.compile("\\x{0000}", Pattern.UNICODE_CASE | Pattern.CASE_INSENSITIVE);
 
         for (int i = 0; i < 0x100; i++) {
