@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class LocalPart extends Parser {
+final class LocalPart extends Parser {
     private boolean closingQuote = false;
     private boolean parseDQuote = true;
     private static int RFC5321_LOCALPART_MAX_LENGTH = 64;

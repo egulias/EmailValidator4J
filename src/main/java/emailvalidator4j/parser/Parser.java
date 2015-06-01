@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public abstract class Parser {
+abstract class Parser {
     protected List<Warnings> warnings = new ArrayList<Warnings>();
     protected EmailLexer lexer;
 

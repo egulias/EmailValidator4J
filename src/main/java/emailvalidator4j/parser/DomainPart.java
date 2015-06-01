@@ -8,7 +8,7 @@ import emailvalidator4j.parser.exception.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class DomainPart extends Parser {
+final class DomainPart extends Parser {
 
     private static final int DOMAINPART_MAX_LENGTH = 255;
     private static final int LABEL_MAX_LENGTH = 63;

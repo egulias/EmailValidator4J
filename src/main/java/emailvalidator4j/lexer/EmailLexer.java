@@ -1,8 +1,6 @@
 package emailvalidator4j.lexer;
 
 import emailvalidator4j.lexer.exception.TokenNotFound;
-import emailvalidator4j.parser.Parser;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -14,7 +12,7 @@ public class EmailLexer {
     private String lexedText = "";
     private int position = 0;
     private Optional<TokenInterface> current = Optional.empty();
-    private final List<TokenInterface> tokens = new ArrayList<TokenInterface>();
+    private final List<TokenInterface> tokens = new ArrayList<>();
 
     public void lex(String input) {
         Pattern pattern = Pattern.compile(

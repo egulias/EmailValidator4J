@@ -1,6 +1,6 @@
 package emailvalidator4j.lexer;
 
-public class Token implements TokenInterface {
+final public class Token implements TokenInterface {
 
     private String name;
     private String text;
