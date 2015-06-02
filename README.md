@@ -49,4 +49,6 @@ Will check for the existance of a Mail eXchange record on the host.
 **this makes a dns request**
 
 
+Licence
+-----------
 
