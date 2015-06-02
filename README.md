@@ -42,10 +42,10 @@ Validation strategies should implement `emailvalidator4j.ValidationStrategy`
 ## Out of the box available validators
 
 ### WarningsNotAllowed
-Will make an email invalid if there's at lest one [Warning](https://github.com/egulias/EmailValidator4J/blob/master/src/main/java/emailvalidator4j/parser/Warnings.java)
+Will make an email invalid if there's at least one [Warning](https://github.com/egulias/EmailValidator4J/blob/master/src/main/java/emailvalidator4j/parser/Warnings.java)
 
 ### MXRecord
-Will check for the existance of a Mail eXchange record on the host.
+Will check for the existence of a Mail eXchange record on the host.
 **this makes a dns request**
 
 
