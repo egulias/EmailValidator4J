@@ -51,4 +51,5 @@ Will check for the existence of a Mail eXchange record on the host.
 
 Licence
 -----------
+Released under the MIT License attached with this code.
 
