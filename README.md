@@ -1,7 +1,7 @@
 # EmailValidator4J
 [![Build Status](https://travis-ci.org/egulias/EmailValidator4J.svg?branch=master)](https://travis-ci.org/egulias/EmailValidator4J)
 
-RFC strict EmailValidator for Java
+Simple RFC compliant EmailValidator for Java.
 
 **Suported RFCs**
 
@@ -26,11 +26,26 @@ dependencies {
 
 [JCenter]: https://bintray.com/egulias/maven/email-validator-4j
 
+## Why not using ANTLR
+Because you don't want to download internet to validate an email.
 
 Getting Started
 ---------------
 
 ```java
+
+import emailvalidator4j.EmailValidator
+
+public class ValidateEmail {
+    public static void main (String[] args) {
+        EmailValidator validator = new EmailValidator();
+        if (validator->isValid(args[0]) {
+            System.out.println("Valid email");
+        } else {
+            System.out.println("Invalid email");
+        }
+    }
+}
 ```
 
 Validation Strategies
