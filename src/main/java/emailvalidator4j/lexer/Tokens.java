@@ -35,6 +35,9 @@ public enum Tokens implements TokenInterface {
     public static final String INVALID = "INVALID";
 
     private static final HashMap<String, TokenInterface> tokensMap = new HashMap<String, TokenInterface>();
+    private static final Pattern invalidUTF8 = Pattern.compile("\\p{Cc}+",
+            Pattern.UNICODE_CASE | Pattern.CASE_INSENSITIVE);
+
     private final String name;
     private final String text;
 
@@ -64,10 +67,7 @@ public enum Tokens implements TokenInterface {
     }
 
     private static boolean isUTF8Invalid(String match) {
-        Pattern pattern = Pattern.compile("\\p{Cc}+", Pattern.UNICODE_CASE | Pattern.CASE_INSENSITIVE);
-        Matcher matcher = pattern.matcher(match);
-
-        return matcher.find();
+        return invalidUTF8.matcher(match).find();
     }
 
     public boolean equals(TokenInterface that) {

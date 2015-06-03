@@ -16,7 +16,7 @@ public class EmailLexer {
 
     public void lex(String input) {
         Pattern pattern = Pattern.compile(
-                "([a-zA-Z_]+[46]?)|([0-9]+)|(\r\n)|(::)|(\\s+?)|(.)", Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE
+                "([a-zA-Z_]+[46]?)|([0-9]+)|(\r\n)|(::)|(\\s+?)|(.)|(\\p{Cc}+)", Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE
         );
         Matcher matcher = pattern.matcher(input);
 
