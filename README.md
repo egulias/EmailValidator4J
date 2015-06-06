@@ -1,5 +1,6 @@
 # EmailValidator4J
 [![Build Status](https://travis-ci.org/egulias/EmailValidator4J.svg?branch=master)](https://travis-ci.org/egulias/EmailValidator4J)
+[![Download](https://api.bintray.com/packages/egulias/maven/EmailValidator4J/images/download.svg) ](https://bintray.com/egulias/maven/EmailValidator4J/_latestVersion)
 
 Simple RFC compliant EmailValidator for Java.
 
@@ -13,14 +14,15 @@ EmailValidator4j is available on [JCenter]!!!
 
 ```groovy
 dependencies {
+    compile 'egulias:emailvalidator4j:1.0.0'
 }
 ```
 
 ```xml
 <dependency>
-  <groupId></groupId>
-  <artifactId></artifactId>
-  <version></version>
+  <groupId>egulias</groupId>
+  <artifactId>emailvalidator4j</artifactId>
+  <version>1.0.0</version>
 </dependency>
 ```
 

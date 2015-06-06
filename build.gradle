@@ -5,7 +5,10 @@ plugins {
 
 apply plugin: 'java'
 apply plugin: 'idea'
-version = '1.0'
+apply plugin: 'com.jfrog.bintray'
+apply plugin: 'maven'
+
+version = '1.0.0'
 
 repositories {
     mavenCentral()
@@ -16,4 +19,68 @@ dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.11'
     testCompile group: 'com.tngtech.java', name: 'junit-dataprovider', version: '1.9.2'
     testCompile "org.mockito:mockito-core:1.+"
+}
+
+def siteUrl = 'https://github.com/egulias/EmailValidator4J'
+def gitUrl = 'https://github.com/egulias/EmailValidator4J.git'
+group = "egulias"
+
+Properties properties = new Properties()
+properties.load(project.rootProject.file('local.properties').newDataInputStream())
+
+
+task createPom << {
+    pom {
+        project {
+            groupId 'emailvalidator4j'
+            artifactId 'emailvalidator4j-1.0.0'
+            version '1.0.0'
+
+            inceptionYear '2015'
+            licenses {
+                license {
+                    name 'MIT'
+                    url 'http://opensource.org/licenses/mit-license.php'
+                    distribution 'repo'
+                }
+            }
+        }
+    }.writeTo("pom.xml")
+}
+
+bintray {
+    user = properties.getProperty("bintray.user")
+    key = properties.getProperty("bintray.apikey")
+
+    configurations = ['archives']
+    pkg {
+        repo = "maven"
+        name = "EmailValidator4J"
+        websiteUrl = siteUrl
+        vcsUrl = gitUrl
+        licenses = ["MIT"]
+        labels = ['email', 'validator', 'email validation']
+        issueTrackerUrl = 'https://github.com/egulias/EmailValidator4J/issues'
+        publish = true
+        version {
+            name = '1.0.0' //Bintray logical version name
+            desc = 'First release'
+            vcsTag = '1.0.0'
+        }
+    }
+}
+
+task sourceJar(type: Jar) {
+    from sourceSets.main.allJava
+    classifier 'sources'
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
+artifacts {
+    archives javadocJar
+    archives sourceJar
 }
