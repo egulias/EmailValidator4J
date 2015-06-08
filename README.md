@@ -14,15 +14,17 @@ EmailValidator4j is available on [JCenter]!!!
 
 ```groovy
 dependencies {
-    compile 'egulias:emailvalidator4j:1.0.0'
+    compile 'egulias:EmailValidator4J:1.0.0'
 }
 ```
 
 ```xml
 <dependency>
-  <groupId>egulias</groupId>
-  <artifactId>emailvalidator4j</artifactId>
-  <version>1.0.0</version>
+    <groupId>egulias</groupId>
+    <artifactId>EmailValidator4J</artifactId>
+    <version>1.0.0</version>
+    <type>jar</type>
+    <classifier>sources</classifier>
 </dependency>
 ```
 
