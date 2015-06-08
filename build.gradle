@@ -25,8 +25,9 @@ def siteUrl = 'https://github.com/egulias/EmailValidator4J'
 def gitUrl = 'https://github.com/egulias/EmailValidator4J.git'
 group = "egulias"
 
-Properties properties = new Properties()
-properties.load(project.rootProject.file('local.properties').newDataInputStream())
+String getProperty (String name, String value) {
+    project.hasProperty (name)? project.property (name) : value
+}
 
 
 task createPom << {
@@ -49,8 +50,8 @@ task createPom << {
 }
 
 bintray {
-    user = properties.getProperty("bintray.user")
-    key = properties.getProperty("bintray.apikey")
+    user = getProperty("bintray.user", "anon")
+    key = getProperty("bintray.apikey", "anon")
 
     configurations = ['archives']
     pkg {

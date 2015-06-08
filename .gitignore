@@ -3,4 +3,3 @@ build
 *.iws
 *.iml
 .gradle
-local.properties
