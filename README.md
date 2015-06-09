@@ -28,7 +28,7 @@ dependencies {
 </dependency>
 ```
 
-[JCenter]: https://bintray.com/egulias/maven/EmailValidator4J/
+[JCenter]: https://bintray.com/egulias/maven/EmailValidator4J
 
 ## Why not using ANTLR
 Because you don't want to download internet to validate an email.
