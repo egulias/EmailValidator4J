@@ -22,6 +22,7 @@ final class LocalPart extends Parser {
     @Override
     public void parse(String localpart) throws InvalidEmail {
         lexer.lex(localpart);
+        int localPartOpenedParenthesis = 0;
         if (this.lexer.getCurrent().equals(Tokens.DOT)) {
             throw new DotAtStart("Found DOT at start");
         }
@@ -35,6 +36,14 @@ final class LocalPart extends Parser {
 
             if (this.lexer.getCurrent().equals(Tokens.OPENPARETHESIS)) {
                 this.parseComment();
+                localPartOpenedParenthesis += getOpenedParenthesis();
+            }
+
+            if (this.lexer.getCurrent().equals(Tokens.CLOSEPARENTHESIS)) {
+                if(localPartOpenedParenthesis == 0) {
+                    throw new UnclosedComment("Missing closing parenthesis");
+                }
+                localPartOpenedParenthesis--;
             }
 
             this.checkConsecutiveDots();

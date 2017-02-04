@@ -12,6 +12,7 @@ import java.util.List;
 abstract class Parser {
     protected List<Warnings> warnings = new ArrayList<Warnings>();
     protected EmailLexer lexer;
+    protected int openedParenthesis = 0;
 
     public Parser(EmailLexer lexer) {
         this.lexer = lexer;
@@ -32,11 +33,19 @@ abstract class Parser {
         return this.lexer.getPrevious().equals(Tokens.BACKSLASH) && !this.lexer.getCurrent().equals(Tokens.get("GENERIC"));
     }
 
+    protected int getOpenedParenthesis() {
+        return this.openedParenthesis;
+    }
+
     protected void parseComment() throws InvalidEmail {
+        this.openedParenthesis = 1;
         this.checkUnclosedComment();
         this.warnings.add(Warnings.COMMENT);
 
         while (!this.lexer.getCurrent().equals(Tokens.CLOSEPARENTHESIS)) {
+            if (this.lexer.isNextToken(Tokens.OPENPARETHESIS)) {
+                this.openedParenthesis++;
+            }
             this.lexer.next();
         }
 

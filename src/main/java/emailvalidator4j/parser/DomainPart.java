@@ -52,6 +52,7 @@ final class DomainPart extends Parser {
     }
 
     private void doParseDomainPart() throws InvalidEmail {
+        int domainPartOpenedParenthesis = 0;
         do {
             if (this.lexer.getCurrent().equals(Tokens.SEMICOLON)) {
                 throw new ExpectedATEXT("Expected ATEXT");
@@ -65,7 +66,19 @@ final class DomainPart extends Parser {
                 }
 
                 this.parseComment();
+                domainPartOpenedParenthesis += getOpenedParenthesis();
                 this.lexer.next();
+                if (this.lexer.getPrevious().equals(Tokens.CLOSEPARENTHESIS)) {
+                    domainPartOpenedParenthesis--;
+                }
+
+            }
+
+            if (this.lexer.getCurrent().equals(Tokens.CLOSEPARENTHESIS)) {
+                if (domainPartOpenedParenthesis <= 0) {
+                    throw new UnclosedComment("Missing closing parenthesis");
+                }
+                domainPartOpenedParenthesis--;
             }
 
             this.checkConsecutiveDots();
