@@ -49,7 +49,8 @@ public class DomainPartTest {
                 {DomainHyphen.class, "@atstart-.com"},
                 {DomainNotAllowedCharacter.class, "@atst\\art.com"},
                 {DomainNotAllowedCharacter.class, "@example\\"},
-                {DomainNotAllowedCharacter.class, "@exa\\mple"}
+                {DomainNotAllowedCharacter.class, "@exa\\mple"},
+                {UnclosedDomainLiteral.class, "@example]"},
         };
     }
 

@@ -53,6 +53,7 @@ final class DomainPart extends Parser {
 
     private void doParseDomainPart() throws InvalidEmail {
         int domainPartOpenedParenthesis = 0;
+        boolean openBrackets = false;
         do {
             if (this.lexer.getCurrent().equals(Tokens.SEMICOLON)) {
                 throw new ExpectedATEXT("Expected ATEXT");
@@ -84,7 +85,8 @@ final class DomainPart extends Parser {
             this.checkConsecutiveDots();
             this.checkExceptions();
 
-            if (this.lexer.getCurrent().equals(Tokens.OPENBRACKET)) {
+            if (isDomainLiteral(openBrackets)) {
+                openBrackets = true;
                 this.parseLiteralPart();
             }
 
@@ -96,6 +98,14 @@ final class DomainPart extends Parser {
 
             this.lexer.next();
         } while (!this.lexer.isAtEnd());
+    }
+
+    private boolean isDomainLiteral(boolean openBrackets) throws UnclosedDomainLiteral {
+        if (this.lexer.getCurrent().equals(Tokens.CLOSEBRACKET) && !openBrackets) {
+            throw new UnclosedDomainLiteral("Missing open bracket [");
+        }
+
+        return this.lexer.getCurrent().equals(Tokens.OPENBRACKET);
     }
 
     private void checkNotAllowedChars(TokenInterface token) throws DomainNotAllowedCharacter {
