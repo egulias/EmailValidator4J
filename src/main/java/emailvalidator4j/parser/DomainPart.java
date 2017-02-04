@@ -2,9 +2,11 @@ package emailvalidator4j.parser;
 
 import emailvalidator4j.lexer.EmailLexer;
 import emailvalidator4j.lexer.Token;
+import emailvalidator4j.lexer.TokenInterface;
 import emailvalidator4j.lexer.Tokens;
 import emailvalidator4j.parser.exception.*;
 
+import java.util.HashSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -12,6 +14,10 @@ final class DomainPart extends Parser {
 
     private static final int DOMAINPART_MAX_LENGTH = 255;
     private static final int LABEL_MAX_LENGTH = 63;
+    private final HashSet<TokenInterface> notAllowedTokens = new HashSet<TokenInterface>(2) {{
+        add(Tokens.BACKSLASH);
+        add(Tokens.SLASH);
+    }};
 
     DomainPart (EmailLexer lexer) {
         super(lexer);
@@ -51,11 +57,7 @@ final class DomainPart extends Parser {
                 throw new ExpectedATEXT("Expected ATEXT");
             }
 
-            if (this.lexer.getCurrent().equals(Tokens.SLASH)) {
-                throw new DomainNotAllowedCharacter(
-                        String.format("%s is not allowed in domain part", this.lexer.getCurrent().getName())
-                );
-            }
+            checkNotAllowedChars(this.lexer.getCurrent());
 
             if (this.lexer.getCurrent().equals(Tokens.OPENPARETHESIS)) {
                 if (this.lexer.getPrevious().equals(Tokens.AT)) {
@@ -81,6 +83,15 @@ final class DomainPart extends Parser {
 
             this.lexer.next();
         } while (!this.lexer.isAtEnd());
+    }
+
+    private void checkNotAllowedChars(TokenInterface token) throws DomainNotAllowedCharacter {
+        if (notAllowedTokens.contains(token)) {
+            throw new DomainNotAllowedCharacter(
+                    String.format("%s is not allowed in domain part", token.getName())
+            );
+        }
+
     }
 
     private void checkLabelLength() {
