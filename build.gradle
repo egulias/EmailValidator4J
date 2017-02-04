@@ -8,7 +8,7 @@ apply plugin: 'idea'
 apply plugin: 'com.jfrog.bintray'
 apply plugin: 'maven'
 
-version = '1.0.0'
+version = '1.0.1'
 
 repositories {
     mavenCentral()
@@ -35,8 +35,8 @@ task createPom << {
     pom {
         project {
             groupId 'emailvalidator4j'
-            artifactId 'emailvalidator4j-1.0.0'
-            version '1.0.0'
+            artifactId 'emailvalidator4j-1.0.1'
+            version '1.0.1'
 
             inceptionYear '2015'
             licenses {
@@ -65,9 +65,9 @@ bintray {
         issueTrackerUrl = 'https://github.com/egulias/EmailValidator4J/issues'
         publish = true
         version {
-            name = '1.0.0' //Bintray logical version name
-            desc = 'First release'
-            vcsTag = '1.0.0'
+            name = '1.0.1' //Bintray logical version name
+            desc = 'Port of fixes: brackets and comments'
+            vcsTag = '1.0.1'
         }
     }
 }
