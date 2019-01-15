@@ -47,10 +47,14 @@ public class DomainPartTest {
                 {ConsecutiveAT.class, "@@start"},
                 {ExpectedATEXT.class, "@at[start"},
                 {DomainHyphen.class, "@atstart-.com"},
+                {DomainHyphen.class, "@bb.-cc"},
+                {DomainHyphen.class, "@bb.-cc-"},
+                {DomainHyphen.class, "@bb.cc-"},
                 {DomainNotAllowedCharacter.class, "@atst\\art.com"},
                 {DomainNotAllowedCharacter.class, "@example\\"},
                 {DomainNotAllowedCharacter.class, "@exa\\mple"},
                 {UnclosedDomainLiteral.class, "@example]"},
+                {ConsecutiveGeneric.class, "@example'"},
         };
     }
 
