@@ -55,6 +55,10 @@ final class DomainPart extends Parser {
         int domainPartOpenedParenthesis = 0;
         boolean openBrackets = false;
         do {
+            if (this.lexer.getCurrent().equals(Tokens.HYPHEN)) {
+                throw new DomainHyphen("Found -  in domain part");
+            }
+
             if (this.lexer.getCurrent().equals(Tokens.SEMICOLON)) {
                 throw new ExpectedATEXT("Expected ATEXT");
             }
@@ -148,6 +152,11 @@ final class DomainPart extends Parser {
 
         if (this.lexer.getCurrent().equals(Tokens.BACKSLASH) && this.lexer.isNextToken(Tokens.get("GENERIC"))) {
             throw new ExpectedATEXT("Found BACKSLASH");
+        }
+
+        if (this.lexer.getCurrent().equals(Tokens.get("GENERIC")) && this.lexer.isNextToken(Tokens.get("GENERIC"))) {
+            this.lexer.next();
+            throw new ConsecutiveGeneric("Found " + this.lexer.getCurrent().getText());
         }
     }
 
