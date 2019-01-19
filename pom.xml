@@ -3,8 +3,8 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <modelVersion>4.0.0</modelVersion>
   <groupId>emailvalidator4j</groupId>
-  <artifactId>emailvalidator4j-1.0.0</artifactId>
-  <version>1.0.0</version>
+  <artifactId>emailvalidator4j-1.0.2</artifactId>
+  <version>1.0.2</version>
   <inceptionYear>2015</inceptionYear>
   <licenses>
     <license>

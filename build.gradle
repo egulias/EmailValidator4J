@@ -8,7 +8,7 @@ apply plugin: 'idea'
 apply plugin: 'com.jfrog.bintray'
 apply plugin: 'maven'
 
-version = '1.0.1'
+version = '1.0.2'
 
 repositories {
     mavenCentral()
@@ -30,24 +30,35 @@ String getProperty (String name, String value) {
     project.hasProperty (name)? project.property (name) : value
 }
 
+allprojects {
+    apply plugin: 'java'
 
-task createPom << {
-    pom {
-        project {
-            groupId 'emailvalidator4j'
-            artifactId 'emailvalidator4j-1.0.1'
-            version '1.0.1'
+    compileJava.options.encoding = 'UTF-8'
+    compileTestJava.options.encoding = 'UTF-8'
 
-            inceptionYear '2015'
-            licenses {
-                license {
-                    name 'MIT'
-                    url 'http://opensource.org/licenses/mit-license.php'
-                    distribution 'repo'
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
+}
+
+task createPom {
+    doLast {
+        pom {
+            project {
+                groupId 'emailvalidator4j'
+                artifactId "emailvalidator4j-${project.version}"
+                version project.version
+
+                inceptionYear '2015'
+                licenses {
+                    license {
+                        name 'MIT'
+                        url 'http://opensource.org/licenses/mit-license.php'
+                        distribution 'repo'
+                    }
                 }
             }
-        }
-    }.writeTo("pom.xml")
+        }.writeTo("pom.xml")
+    }
 }
 
 bintray {
