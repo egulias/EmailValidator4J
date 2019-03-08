@@ -168,6 +168,17 @@ public class EmailLexerTest {
     }
 
     @Test
+    @UseDataProvider("atextExamples")
+    public void atextParsing(String atext) {
+        EmailLexer lexer = new EmailLexer();
+        lexer.lex(atext);
+        TokenInterface token = lexer.getCurrent();
+        Assert.assertEquals(Tokens.GENERIC, token.getName());
+        Assert.assertEquals(atext, token.getText());
+
+    }
+
+    @Test
     @UseDataProvider("invalidUTF8StringsProvider")
     public void invalidUTF8CharsAreInvalidTokens(String utf8String) throws Exception {
         EmailLexer lexer = new EmailLexer();
@@ -176,6 +187,42 @@ public class EmailLexerTest {
                 utf8String.concat("@bar.com") + " has INVALID tokens",
                 lexer.getCurrent().equals(Tokens.get(utf8String))
         );
+    }
+
+    /*
+     *    atext           =   UTF8-non-ascii /
+     *                        ALPHA / DIGIT /    ; Printable US-ASCII
+     *                        "!" / "#" /        ;  characters not including
+     *                        "$" / "%" /        ;  specials.  Used for atoms.
+     *                        "&" / "'" /
+     *                        "*" / "+" /
+     *                        "-" / "/" /
+     *                        "=" / "?" /
+     *                        "^" / "_" /
+     *                        "`" / "{" /
+     *                        "|" / "}" /
+     *                        "~"
+     */
+    @DataProvider
+    public static Object[][] atextExamples() {
+        return new Object[][] {
+                {"a"},
+                {"1"},
+                {"!"},
+                {"\uD83D"},
+                {"aa"},
+                {"a1"},
+                {"a!"},
+                {"a\uD83D"},
+                {"aaa"},
+                {"a1a"},
+                {"a!a"},
+                {"a\uD83D!"},
+                {"aaa\uD83D"},
+                {"a1a\uD83D"},
+                {"a!a\uD83D"},
+                {"a\uD83Da\uD83D"},
+        };
     }
 
     @DataProvider

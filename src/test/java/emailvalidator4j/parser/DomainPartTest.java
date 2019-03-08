@@ -12,6 +12,7 @@ import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 @RunWith(DataProviderRunner.class)
@@ -54,7 +55,7 @@ public class DomainPartTest {
                 {DomainNotAllowedCharacter.class, "@example\\"},
                 {DomainNotAllowedCharacter.class, "@exa\\mple"},
                 {UnclosedDomainLiteral.class, "@example]"},
-                {ConsecutiveGeneric.class, "@example'"},
+                {DomainNotAllowedCharacter.class, "@example'"},
         };
     }
 
@@ -86,6 +87,8 @@ public class DomainPartTest {
     @DataProvider
     public static Object[][] domainPartWithWarnings() {
         return new Object[][]{
+                {"@has-hyphen.example.com", Collections.emptyList()},
+                {"@1leadingnumber.example.com", Collections.emptyList()},
                 {"@ example.com", Arrays.asList(Warnings.DEPRECATED_CFWS_NEAR_AT)},
                 {"@example(comment).com", Arrays.asList(Warnings.COMMENT)},
                 {"@domaintoolongdomaintoolongdomaintoolongdomaintoolongdomaintoolongdomaintoolongdomaintoolongdomaintoolong" +
