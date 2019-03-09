@@ -119,6 +119,10 @@ final class DomainPart extends Parser {
                     String.format("%s is not allowed in domain part", token.getName())
             );
         }
+        checkNotAllowedCharsInSubDomain(token);
+    }
+
+    private void checkNotAllowedCharsInSubDomain(TokenInterface token) throws DomainHyphen, DomainNotAllowedCharacter {
         if (Tokens.GENERIC.equals(token.getName())) {
             String subDomain = token.getText();
             if (subDomain.charAt(0) == '-') {
