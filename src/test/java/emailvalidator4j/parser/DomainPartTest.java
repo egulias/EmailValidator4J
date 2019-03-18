@@ -12,6 +12,7 @@ import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 @RunWith(DataProviderRunner.class)
@@ -54,7 +55,7 @@ public class DomainPartTest {
                 {DomainNotAllowedCharacter.class, "@example\\"},
                 {DomainNotAllowedCharacter.class, "@exa\\mple"},
                 {UnclosedDomainLiteral.class, "@example]"},
-                {ConsecutiveGeneric.class, "@example'"},
+                {DomainNotAllowedCharacter.class, "@example'"},
         };
     }
 
@@ -113,6 +114,30 @@ public class DomainPartTest {
                         Arrays.asList(Warnings.RFC5321_ADDRESS_LITERAL, Warnings.RFC5322_IPV6_END_WITH_COLON)},
                 {"@[IPv6:1111:2222:3333:4444:5555:6666:7777]",
                         Arrays.asList(Warnings.RFC5321_ADDRESS_LITERAL, Warnings.RFC5322_IPV6_GROUP_COUNT)},
+        };
+    }
+
+    @Test
+    @UseDataProvider("domainPartWithoutWarnings")
+    public void domainPartHasNoWarnings(String domainPart) throws InvalidEmail {
+        DomainPart parser = this.getDomainPartParser();
+        parser.parse(domainPart);
+
+        Assert.assertEquals(Collections.emptyList(), parser.getWarnings());
+    }
+
+    @DataProvider
+    public static Object[][] domainPartWithoutWarnings() {
+        return new Object[][]{
+                {"@example.com"},
+                {"@subdomain.example.com"},
+                {"@has-hyphen.example.com"},
+                {"@1leadingnumber.example.com"},
+                {"@письмо.рф"},
+                {"@example.co"},
+                {"@subdomain.example.co"},
+                {"@has-hyphen.example.co"},
+                {"@1leadingnumber.example.co"},
         };
     }
 

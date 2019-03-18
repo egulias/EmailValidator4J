@@ -12,6 +12,7 @@ import java.util.regex.Pattern;
 
 final class DomainPart extends Parser {
 
+    private static final Pattern subDomainIllegalCharacters = Pattern.compile("[^a-zA-Z0-9\\-\\x00007F-\\u10FFFF]");
     private static final int DOMAINPART_MAX_LENGTH = 255;
     private static final int LABEL_MAX_LENGTH = 63;
     private final HashSet<TokenInterface> notAllowedTokens = new HashSet<TokenInterface>(2) {{
@@ -112,13 +113,29 @@ final class DomainPart extends Parser {
         return this.lexer.getCurrent().equals(Tokens.OPENBRACKET);
     }
 
-    private void checkNotAllowedChars(TokenInterface token) throws DomainNotAllowedCharacter {
+    private void checkNotAllowedChars(TokenInterface token) throws DomainNotAllowedCharacter, DomainHyphen {
         if (notAllowedTokens.contains(token)) {
             throw new DomainNotAllowedCharacter(
                     String.format("%s is not allowed in domain part", token.getName())
             );
         }
+        checkNotAllowedCharsInSubDomain(token);
+    }
 
+    private void checkNotAllowedCharsInSubDomain(TokenInterface token) throws DomainHyphen, DomainNotAllowedCharacter {
+        if (Tokens.GENERIC.equals(token.getName())) {
+            String subDomain = token.getText();
+            if (subDomain.charAt(0) == '-') {
+                throw new DomainHyphen("Sub-domains cannot start with hyphen");
+            }
+            if (subDomain.charAt(Math.max(0, subDomain.length() - 1)) == '-') {
+                throw new DomainHyphen("Sub-domains cannot end with hyphen");
+            }
+            Matcher matcher = subDomainIllegalCharacters.matcher(subDomain);
+            if (matcher.find()) {
+                throw new DomainNotAllowedCharacter(matcher.group());
+            }
+        }
     }
 
     private void checkLabelLength() {
