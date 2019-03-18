@@ -8,7 +8,7 @@ apply plugin: 'idea'
 apply plugin: 'com.jfrog.bintray'
 apply plugin: 'maven'
 
-version = '1.0.2'
+version = '1.0.3'
 
 repositories {
     mavenCentral()
@@ -76,9 +76,9 @@ bintray {
         issueTrackerUrl = 'https://github.com/egulias/EmailValidator4J/issues'
         publish = true
         version {
-            name = '1.0.1' //Bintray logical version name
-            desc = 'Port of fixes: brackets and comments'
-            vcsTag = '1.0.1'
+            name = '1.0.3' //Bintray logical version name
+            desc = 'Improvements on hyphened domains'
+            vcsTag = '1.0.3'
         }
     }
 }
