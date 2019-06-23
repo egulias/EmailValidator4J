@@ -7,8 +7,10 @@ import emailvalidator4j.parser.exception.InvalidCharacters;
 import emailvalidator4j.parser.exception.InvalidEmail;
 import emailvalidator4j.parser.exception.NoLocalPart;
 
+import javax.swing.text.html.Option;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class Email {
     private final EmailLexer lexer;
@@ -22,7 +24,9 @@ public class Email {
     }
 
     public void parse(String email) throws InvalidEmail {
-        this.lexer.lex(email);
+        this.lexer.lex(Optional.ofNullable(email).orElseThrow(() ->
+            new InvalidEmail("Empty email")
+        ));
 
         if (!this.lexer.find(Tokens.AT)) {
             throw new NoLocalPart("No local part found");

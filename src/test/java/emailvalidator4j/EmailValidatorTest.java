@@ -112,6 +112,12 @@ public class EmailValidatorTest {
     }
 
     @Test
+    public void preventNull() {
+        EmailValidator validator = new EmailValidator();
+        Assert.assertFalse(validator.isValid(null));
+    }
+
+    @Test
     public void validEmailHasWarnings() {
         EmailValidator validator = new EmailValidator();
         validator.isValid("test@[127.0.0.0]");

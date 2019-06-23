@@ -3,3 +3,4 @@ build
 *.iws
 *.iml
 .gradle
+out/
