@@ -1,6 +1,5 @@
 package emailvalidator4j.lexer;
 
-import com.sun.javaws.exceptions.InvalidArgumentException;
 import emailvalidator4j.lexer.exception.TokenNotFound;
 import java.util.ArrayList;
 import java.util.List;
