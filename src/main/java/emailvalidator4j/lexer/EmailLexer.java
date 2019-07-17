@@ -1,5 +1,6 @@
 package emailvalidator4j.lexer;
 
+import com.sun.javaws.exceptions.InvalidArgumentException;
 import emailvalidator4j.lexer.exception.TokenNotFound;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,8 +17,10 @@ public class EmailLexer {
 
     public void lex(String input) {
         Pattern pattern = Pattern.compile(
-                "(([a-zA-Z0-9!#$%&'*+\\-/=?^_`{|}~]|[^\\u0000-\\u007F])+[46]?)|([0-9]+)|(\r\n)|(::)|(\\s+?)|(.)|(\\p{Cc}+)", Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE
+                "(([a-zA-Z0-9!#$%&'*+\\-/=?^_`{|}~]|[^\\u0000-\\u007F])+[46]?)|([0-9]+)|(\r\n)|(::)|(\\s+?)|(.)|(\\p{Cc}+)",
+                Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE
         );
+
         Matcher matcher = pattern.matcher(input);
 
         this.reset();

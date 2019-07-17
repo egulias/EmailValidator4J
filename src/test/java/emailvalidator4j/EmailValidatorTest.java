@@ -3,6 +3,7 @@ package emailvalidator4j;
 import com.tngtech.java.junit.dataprovider.DataProvider;
 import com.tngtech.java.junit.dataprovider.DataProviderRunner;
 import com.tngtech.java.junit.dataprovider.UseDataProvider;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -133,5 +134,12 @@ public class EmailValidatorTest {
         EmailValidator validator = new EmailValidator();
         validator.isValid("test@[127.0.0.0]");
         Assert.assertFalse(validator.getWarnings().isEmpty());
+    }
+
+    @Test
+    public void controlStringOverflow() {
+        String filled = StringUtils.repeat("a", 2000);
+        EmailValidator validator = new EmailValidator();
+        Assert.assertFalse(validator.isValid(filled.concat("@example.com")));
     }
 }

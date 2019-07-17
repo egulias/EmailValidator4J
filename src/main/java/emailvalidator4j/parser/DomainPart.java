@@ -13,8 +13,8 @@ import java.util.regex.Pattern;
 final class DomainPart extends Parser {
 
     private static final Pattern subDomainIllegalCharacters = Pattern.compile("[^a-zA-Z0-9\\-\\x00007F-\\u10FFFF]");
-    private static final int DOMAINPART_MAX_LENGTH = 255;
     private static final int LABEL_MAX_LENGTH = 63;
+    public static final int DOMAINPART_MAX_LENGTH = 255;
     private final HashSet<TokenInterface> notAllowedTokens = new HashSet<TokenInterface>(2) {{
         add(Tokens.BACKSLASH);
         add(Tokens.SLASH);
