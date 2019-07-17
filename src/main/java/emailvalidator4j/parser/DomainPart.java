@@ -259,6 +259,11 @@ final class DomainPart extends Parser {
             }
 
         } while(!this.lexer.isAtEnd() && !this.lexer.isNextToken(Tokens.CLOSEBRACKET));
+
+        if (!Tokens.CLOSEBRACKET.equals(this.lexer.getCurrent())) {
+            throw new ExpectedDTEXT("CLOSEBRACKET");
+        }
+
         this.warnings.add(Warnings.RFC5321_ADDRESS_LITERAL);
         addressLiteral = this.lexer.lexedText().replace('[', '\0').replace(']', '\0');
         //Remove the initial @

@@ -57,6 +57,9 @@ public class EmailValidatorTest {
                 {"comment(example))@example.com"},
                 {"example@example)comment.com"},
                 {"example@example(comment)).com"},
+                {"example@[1.2.3.4"},
+                {"example@[IPv6:1:2:3:4:5:6:7:8"},
+                {"exam(ple@exam).ple"},
                 {"example@(example))comment.com"}
 
         };
