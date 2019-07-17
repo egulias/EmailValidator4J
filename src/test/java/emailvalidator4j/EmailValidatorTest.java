@@ -66,7 +66,7 @@ public class EmailValidatorTest {
     @UseDataProvider("invalidEmailProvider")
     public void isInvalidEmail(String email) {
         EmailValidator validator = new EmailValidator();
-        Assert.assertFalse(email + " is an invalid email", validator.isValid(email));
+        Assert.assertFalse(email + " should be an invalid email", validator.isValid(email));
     }
 
     @DataProvider
@@ -93,6 +93,7 @@ public class EmailValidatorTest {
                 {"\"\\a\"@iana.org"},
                 {"\"test\\ test\"@iana.org"},
                 {"\"\"@iana.org"},
+                {"\"\"@[]"}/* kind of an edge case, valid for RFC 5322 but address literal is not for 5321 */,
                 {String.format("\"\\%s\"@iana.org", "\"")},
         };
     }
@@ -101,7 +102,7 @@ public class EmailValidatorTest {
     @UseDataProvider("validEmailsProvider")
     public void isValidEmail(String validEmail) {
         EmailValidator validator = new EmailValidator();
-        Assert.assertTrue(validEmail + " is a valid email", validator.isValid(validEmail));
+        Assert.assertTrue(validEmail + " should be a valid email", validator.isValid(validEmail));
     }
 
     @Test

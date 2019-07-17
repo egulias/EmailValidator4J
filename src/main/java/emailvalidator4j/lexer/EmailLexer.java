@@ -62,7 +62,10 @@ public class EmailLexer {
      */
     public void next() {
         this.position ++;
-        if (!this.isAtEnd()) {
+
+        if (this.isAtEnd()) {
+            this.position = this.tokens.size();
+        } else {
             this.current = Optional.of(this.tokens.get(this.position));
             this.lexedText += this.tokens.get(this.position).getText();
         }
