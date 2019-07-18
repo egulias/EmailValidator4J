@@ -24,11 +24,12 @@ public class Email {
     }
 
     public void parse(String email) throws InvalidEmail {
-        this.validateLength(email);
 
-        this.lexer.lex(Optional.ofNullable(email).orElseThrow(() ->
-            new InvalidEmail("Empty email")
-        ));
+        String nonEmptyEmail = Optional.ofNullable(email).orElseThrow(() ->
+                new InvalidEmail("Empty email"));
+        this.validateLength(nonEmptyEmail);
+
+        this.lexer.lex(nonEmptyEmail);
 
         if (!this.lexer.find(Tokens.AT)) {
             throw new NoLocalPart("No local part found");
@@ -44,6 +45,7 @@ public class Email {
 
     private void validateLength(String email) throws InvalidEmail {
         int maxLength = LocalPart.RFC5321_LOCALPART_MAX_LENGTH + DomainPart.DOMAINPART_MAX_LENGTH + 1;
+
         if (email.length() > maxLength) {
             throw new InvalidEmail("email too long");
         }
