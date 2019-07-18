@@ -27,7 +27,7 @@ final class LocalPart extends Parser {
             throw new DotAtStart("Found DOT at start");
         }
 
-        while (!this.lexer.getCurrent().equals(Tokens.AT)) {
+        while (!this.lexer.getCurrent().equals(Tokens.AT) && !this.lexer.isAtEnd()) {
             closingQuote = this.checkDoubleQuote(closingQuote);
             if (closingQuote && parseDQuote) {
                 this.lexer.next();

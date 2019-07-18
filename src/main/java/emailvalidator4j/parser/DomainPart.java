@@ -27,6 +27,11 @@ final class DomainPart extends Parser {
     @Override
     public void parse(String domainPart) throws InvalidEmail {
         this.lexer.lex(domainPart);
+
+        if(!this.lexer.getCurrent().equals(Tokens.AT)) {
+            throw new ExpectedAT("Missing AT token");
+        }
+
         this.lexer.next();
 
         if (this.lexer.getCurrent().equals(Tokens.DOT)) {
@@ -260,10 +265,6 @@ final class DomainPart extends Parser {
 
         } while(!this.lexer.isAtEnd() && !this.lexer.isNextToken(Tokens.CLOSEBRACKET));
 
-        if (!Tokens.CLOSEBRACKET.equals(this.lexer.getCurrent())) {
-            throw new ExpectedDTEXT("CLOSEBRACKET");
-        }
-
         this.warnings.add(Warnings.RFC5321_ADDRESS_LITERAL);
         addressLiteral = this.lexer.lexedText().replace('[', '\0').replace(']', '\0');
         //Remove the initial @
@@ -272,7 +273,11 @@ final class DomainPart extends Parser {
         } else {
             this.warnings.add(Warnings.RFC5322_DOMAIN_LITERAL);
         }
+
         this.lexer.next();
+        if (!Tokens.CLOSEBRACKET.equals(this.lexer.getCurrent())) {
+            throw new ExpectedDTEXT("CLOSEBRACKET");
+        }
     }
 
     private boolean isObsoleteDTEXT() {
