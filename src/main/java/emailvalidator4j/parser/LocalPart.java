@@ -13,7 +13,7 @@ import java.util.List;
 final class LocalPart extends Parser {
     private boolean closingQuote = false;
     private boolean parseDQuote = true;
-    private static int RFC5321_LOCALPART_MAX_LENGTH = 64;
+    public static int RFC5321_LOCALPART_MAX_LENGTH = 64;
 
     LocalPart (EmailLexer lexer) {
         super(lexer);

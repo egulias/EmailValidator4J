@@ -19,6 +19,7 @@ dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.11'
     testCompile group: 'com.tngtech.java', name: 'junit-dataprovider', version: '1.9.2'
     testCompile "org.mockito:mockito-core:1.+"
+    testCompile group: 'org.apache.commons', name: 'commons-lang3', version: '3.0'
 }
 
 def siteUrl = 'https://github.com/egulias/EmailValidator4J'
